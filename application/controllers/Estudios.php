@@ -780,8 +780,9 @@ class estudios extends CI_Controller {
 
 				$this->load->helper('dropdown_helper');
 				//                                ($table,      $name,                 $value,$orderBy=null, $where_nombre_campo=null, $where_variable=null) {
-				$data->MetodosCombo = listData('estudios','id_estudio', 'metodologia_estudio','ALIAS_ESTUDIO');
-				$data->EnsayosCombo = listData('estudios','id_estudio', 'analisis_solicitado','ALIAS_ESTUDIO');
+						
+				$data->MetodosCombo = listData('estudios','id_estudio', 'metodologia_estudio','AREA_ESTUDIO,ALIAS_ESTUDIO');
+				$data->EnsayosCombo = listData('estudios','id_estudio', 'analisis_solicitado','AREA_ESTUDIO,ALIAS_ESTUDIO');
 				
 				$data->last_id = $nLastId;
 
@@ -1600,5 +1601,38 @@ class estudios extends CI_Controller {
 		$lRet = json_encode($RespData);
 		
 		echo $lRet;		
+	}	
+	/*************************************************************************/
+	public function obtener_todos_los_analitos_x_metodo_lc(){ // is ajax, viene de idr_plagicidas ->funciones.js
+		$lRet = false;
+		$this->db->select('*');
+		$this->db->from('analitos');
+		$this->db->order_by('NOMBRE_ANALITO');		
+		$this->db->like( 'TECNICA_ANALITO','LC');
+		$lRet = $this->db->get();
+		$RespData = array();
+		$RespData['SQL'] = $this->db->last_query();
+		$RespData['RESULTADO'] = $lRet->result();
+		
+		header('Content-type: application/json; charset=utf-8');
+		$lRet = json_encode($RespData);		
+		echo $lRet;		
 	}
+	/***************************************************************************/
+	public function obtener_todos_los_analitos_x_metodo_gc(){ // is ajax, viene de idr_plagicidas ->funciones.js
+		$lRet = false;
+		$this->db->select('*');
+		$this->db->from('analitos');
+		$this->db->order_by('NOMBRE_ANALITO');
+		$this->db->like( 'TECNICA_ANALITO','GC');
+		$lRet = $this->db->get();
+		$RespData = array();
+		$RespData['SQL'] = $this->db->last_query();
+		$RespData['RESULTADO'] = $lRet->result();
+		
+		header('Content-type: application/json; charset=utf-8');
+		$lRet = json_encode($RespData);		
+		echo $lRet;		
+	}
+	/**************************************************************/
 }

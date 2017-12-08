@@ -4,8 +4,10 @@ if(!defined('BASEPATH')) exit('No direct script access allowed');
   function listData($table,$name,$value,$orderBy=null, $where_nombre_campo=null, $where_variable=null) {
       $items = array();
       $CI =& get_instance();
+      //$CI->db->distinct('METODOLOGIA_ESTUDIO');
       if($orderBy) {
-          $CI->db->order_by($value,$orderBy);
+          //$CI->db->order_by($value,$orderBy);
+          $CI->db->order_by($orderBy);          
       }
      
 	  	if ($where_nombre_campo && $where_variable){
@@ -20,10 +22,12 @@ if(!defined('BASEPATH')) exit('No direct script access allowed');
       
       $query = $CI->db->select("$name,$value")->from($table)->get();
       if ($query->num_rows() > 0) {
+      	  $items['0'] = 'Seleccione';
           foreach($query->result() as $data) {
               $items[$data->$name] = $data->$value;
           }
           $query->free_result();
+          $items = array_unique($items);
           return $items;
       }
   }

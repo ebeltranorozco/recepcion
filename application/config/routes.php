@@ -109,6 +109,9 @@ $route['obtener_todos_los_analitos_acreditados'] = 'estudios/obtener_todos_los_a
 //2017-08-09
 $route['obtener_todos_los_metales'] = 'estudios/obtener_todos_los_metales';
 $route['obtener_todos_los_metales_acreditados']	= 'estudios/obtener_todos_los_metales_acreditados';
+//-2017-12-07
+$route['obtener_todos_los_analitos_x_metodo_lc'] = 'estudios/obtener_todos_los_analitos_x_metodo_lc';
+$route['obtener_todos_los_analitos_x_metodo_gc'] = 'estudios/obtener_todos_los_analitos_x_metodo_gc';
 
 $route['reporte_resultados'] = 'estudios/reporte_resultados' ; // agregado desde el menu --> informe de resultados de los estudios realizado, solicitado por calidad
 
@@ -154,3 +157,6 @@ $route['envia_correo'] = 'idr/envia_correo'; // para mandar el correo de visto b
 //$route['correo_idr_microbiologia'] = 'idr/vobo_idr_microbiologia'; // para mandar el correo de visto bueno
 
 $route['libera_formato_solicitud'] = 'estudios/libera_formato_solicitud';
+
+// CANCELACION --> 2017-12-06
+$route['cancela_muestra_solicitud'] = 'estudios/cancela_muestra_solicitud';

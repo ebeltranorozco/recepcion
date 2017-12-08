@@ -9,7 +9,7 @@ $cTel = array('name'=>'telefono_cte','id'=>'telefono_cte','class'=>'form-control
 $cRfc = array('name'=>'rfc_cte','id'=>'rfc_cte','class'=>'form-control' ,'value' => set_value('rfc_cte'),'placeholder'=>'rfc del cliente');
 $cEmail = array('name'=>'email_cte','id'=>'email_cte','class'=>'form-control' ,'value'=> set_value('email_cte'),'placeholder'=>'correo electronico');
 $cCont = array('name'=>'contacto_cte','id'=>'contacto_cte','class'=>'form-control' ,'value' => set_value('contacto_cte'),'placeholder'=>'datos de contacto');
-$cObsRecepcion = array('name'=>'obs_recepcion','id'=>'obs_recepcion','class'=>'form-control' ,'value' => set_value('obs_recepcion'),'maxlength'=>'230'); // marzo 2017
+$cObsRecepcion = array('name'=>'obs_recepcion','id'=>'obs_recepcion','class'=>'form-control' ,'value' => set_value('obs_recepcion'),'maxlength'=>'999'); // marzo 2017
 $cToma_Muestra = array('name'=>'toma_muestra','id'=>'toma_muestra','class'=>'form-control' ,'value' => set_value('toma_muestra'),'maxlength'=>'99','placeholder'=>'nombre de quien tomo la muestra'); // 23/05/2017
 
 //2017-11-27
@@ -23,7 +23,7 @@ $nFolioCotizacion =array('name'=>'folio_cotizacion','id'=>'folio_cotizacion','cl
 
 //14/06/2017 --> variables de reciente ingreso por separacion de descripcion de muestra
 $cDestinoMuestra =array('name'=>'destino_muestra','id'=>'destino_muestra','class'=>'form-control' ,'value' => set_value('destino_muestra'),'maxlength'=>'30');
-$cCondicionesMuestra =array('name'=>'condiciones_muestra','id'=>'condiciones_muestra','class'=>'form-control' ,'value' => set_value('condiciones_muestra'),'maxlength'=>'230');
+$cCondicionesMuestra =array('name'=>'condiciones_muestra','id'=>'condiciones_muestra','class'=>'form-control' ,'value' => set_value('condiciones_muestra'),'maxlength'=>'999');
 
 //2017-08-03 --> Incorporacion de campo para saber si se va generar idr
 $lGeneraFolioIDR = array( 'name'=>'idGeneraFolioIDR','id'=>'idGeneraFolioIDR','class'=>'form-control' ,'value' => set_value('idGeneraFolioIDR'),'style'=>'margin:2px 0 0;border-color:none;box-shadow:none;');
@@ -439,7 +439,7 @@ if ($accion == 'ALTA') {
               
               //variables del detallado del estudio
               $nIdMuestra = array('name'=>'id_muestra','id'=>'id_muestra','class'=>"form-control",'readonly'=>'true','value'=>set_value('id_muestra'));// 16/05/2017 AGREGAR CAMPO  ID MUESTRA
-              $nIdCte   = array('name'=>'id_cte','id'=>'id_cte','class'=>"form-control",'value'=>set_value('id_cte'),'maxlength'=>'10');
+              $nIdCte   = array('name'=>'id_cte','id'=>'id_cte','class'=>"form-control",'value'=>set_value('id_cte'),'maxlength'=>'25');
               $cDesc   = array('name'=>'desc_muestra','id'=>'desc_muestra','class'=>"form-control",'value'=>set_value('desc_muestra'),'maxlength'=>'99');
               $cLote   = array('name'=>'lote','id'=>'lote','class'=>"form-control",'value'=>set_value('lote'),'maxlength'=>'50');
               //$nMues   = array('name'=>'no_muestra','id'=>'no_muestra','class'=>"form-control",'value'=>'');

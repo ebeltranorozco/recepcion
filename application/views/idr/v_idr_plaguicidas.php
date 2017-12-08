@@ -80,7 +80,7 @@ if ($accion =="ALTA") {
 	$cObsResultado['value'] = utf8_encode($cTmp);
 	
 	//$cObsResultado['value'] = 'prueba de como meterle algo';
-	echo form_textarea($cObsResultado);
+	//echo form_textarea($cObsResultado);
 	// hay q heredarlo..!
 	$cTmp = utf8_decode($datos_metodologia->CONDICIONES_MUESTRA);
 	$cCondMuestra['value'] = utf8_encode($cTmp);	
@@ -138,8 +138,7 @@ if (!$datos_metodologia->GENERAR_IDR_MUESTRA) {
 }
 ?>
 <!------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------->
+
 <?php 
 //variables temporal para la segunda tabla ..!
 $cResultado2 = 		array('id'=>'idResultado_analito2','class'=>'form-control' ,'value' => set_value('idResultado_analito2'));
@@ -221,8 +220,6 @@ $cAnalito2 = 		array('id'=>'idAnalito2','class'=>'form-control' ,'value' => set_
       </div> <!--fin de modal dialog -->
     </div> <!-- fin de modal fade (dice q esta de mas esta etiqueta-->
 
-
-<!------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------->    
 
 <hr size=10>
@@ -306,18 +303,30 @@ $cAnalito2 = 		array('id'=>'idAnalito2','class'=>'form-control' ,'value' => set_
 		<div class="form-group col-xs-3 col-sm-2">	
 			<label><br/></label>
 			<?php if ($accion == 'ALTA') { ?>		
-				<button type="text" class="btn btn-primary" id="BtnAgregaTodosAnalitosTabla" >Anexar Todos</button>
-				
-			<?php } ?>
-			
+				<button type="text" class="btn btn-info" id="BtnAgregaTodosAnalitosTabla" >Anexar Todos</button>				
+			<?php } ?>			
 		</div>
 		
 		<div class="form-group col-xs-3 col-sm-3">	
 			<label><br/></label>
 			<?php if ($accion == 'ALTA') { ?>			
-				<button type="text" class="btn btn-primary" id="BtnAgregaAnalitosAcreditadosTabla" >Solo Analitos Acreditados</button>
-			<?php } ?>
-			
+				<button type="text" class="btn btn-info" id="BtnAgregaAnalitosAcreditadosTabla" >Solo Analitos Acreditados</button>
+			<?php } ?>			
+		</div>
+		
+		<!--2017-12-07  anexar botones para separa analitos lc y gc-->
+		<div class="form-group col-xs-3 col-sm-3">	
+			<label><br/></label>
+			<?php if ($accion == 'ALTA') { ?>			
+				<button type="text" class="btn btn-info" id="BtnAgregaAnalitosxMetodoLC" >Analitos por Metodo LC</button>
+			<?php } ?>			
+		</div>
+		
+		<div class="form-group col-xs-3 col-sm-3">	
+			<label><br/></label>
+			<?php if ($accion == 'ALTA') { ?>			
+				<button type="text" class="btn btn-info" id="BtnAgregaAnalitosxMetodoGC" >Analitos por Metodo GC</button>
+			<?php } ?>			
 		</div>
 
 	</div> <!-- fin del row -->

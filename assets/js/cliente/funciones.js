@@ -343,6 +343,11 @@ $(function () {
 	var getUrl = window.location;
 	var baseUrlCorta = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
 	var baseUrlCortaCorta = getUrl .protocol + "//" + getUrl.host + "/";
+	
+	if(baseUrlCortaCorta == 'http://localhost/') {
+		baseUrlCortaCorta += 'recepcion/';
+		alert('Trabajando de Manera Local');
+	}
 		
 	 $('[data-toggle="tooltip"]').tooltip(); //activando los tooltips
 	 /************************************************************/
@@ -487,8 +492,9 @@ $(function () {
 					//$("#myModal").empty();
 					
 					document.getElementById('idBtnCloseModal').click();
-					document.getElementById(ColumnaStatusMuestra).innerHTML = "CANCELADO";				
-					cAlerta = '<div class="alert alert-success" role="alert">' + 'Id [' +cIdMuestra+'] Cancelado con Exito' + '</div>';
+					//document.getElementById(ColumnaStatusMuestra).innerHTML = "CANCELADO";				
+					//cAlerta = '<div class="alert alert-success" role="alert">' + 'Id [' +cIdMuestra+'] Cancelado con Exito' + '</div>';
+					cAlerta = '<div class="alert alert-success" role="alert">' + 'Id [' +cIdMuestra+'] Cancelado con Exito (refresque para visualizar)' + '</div>';
 					document.getElementById('msg_alert_full').innerHTML = cAlerta;
 					//$("#msg_alert_full").fadeout(3500);
 					//alert('Anulado de la Muestra Realizada con Exito');
@@ -1537,10 +1543,10 @@ $(function () {
 					var id_metodo 		= $(this).find("td").eq(6).html();// MB-PM02-006 (oculto)
 					var id 				= $(this).find("td").eq(7).html(); // ID LLAVE DEL ENSAYO oculto
 					
-					var nombre_ensayo 	= $(this).find("td").eq(7).html();
-					var metodo_prueba 	= $(this).find("td").eq(8).html();
-					var importe 		= $(this).find("td").eq(9).html();
-					var fec_entrega 	= $(this).find("td").eq(10).html();
+					var nombre_ensayo 	= $(this).find("td").eq(8).html();
+					var metodo_prueba 	= $(this).find("td").eq(9).html();
+					var importe 		= $(this).find("td").eq(10).html();
+					var fec_entrega 	= $(this).find("td").eq(11).html();
 					if (id_muestra){
 						detallado.push( id_muestra,id_asig_cte,tipo_muestra,peso_vol,temp,lote,id_metodo,id,nombre_ensayo,metodo_prueba,importe,fec_entrega);
 						console.log('almacenando muestra con id [' + id_muestra + ']');
@@ -2709,5 +2715,83 @@ $(function () {
 		
 	});
 	/**********************************************************/
+	$("#BtnAgregaAnalitosxMetodoLC").click(function(){ // agrega todos los analitos a la tabla x metodo LC
+		//obtener las variables que participan USANDO UN AJAX
+		$.ajax({
+			dataType:"json",
+			url:baseUrlCortaCorta+"obtener_todos_los_analitos_x_metodo_lc",
+			success: function(htmlResponse){
+				var objAnalitos = htmlResponse['RESULTADO'];				
+				//console.log(objAnalitos);
+				
+				$.each(objAnalitos,function(i,contenido){			
+					
+					console.log(contenido);
+					
+					var cAnalito 	= objAnalitos[i].NOMBRE_ANALITO;					
+					var cResultado 	= objAnalitos[i].RESULTADO_ANALITO;
+					var cLC 		= objAnalitos[i].LC_ANALITO;
+					var cLMP 		= objAnalitos[i].LMP_ANALITO;
+					//var cTecnica	= objAnalitos[i].TECNICA_ANALITO;
+					var cTecnica	= 'LC';
+					
+					//ANEXANDOLO AHORA A LA TABLA
+					cHtml = '<tr id="'+getRandomChars(6)+'">';
+					cHtml += '<td>'+cAnalito+'</td><td>'+cResultado+'</td><td>'+cLC+'</td><td>'+cLMP+'</td><td>'+cTecnica+'</td>';
+					cHtml += '<td>';
+					
+					cHtml += '<button type="button" class="btn btn-info btn-xs" onclick="deleteRowDetalladoIdrPlagicidas(this)" ><span class="glyphicon glyphicon-trash"></span></button>';
+					cHtml += '<button type="button" class="btn btn-info btn-xs" onclick="EditaRowDetalladoIdrPlagicidas(this)" ><span class="glyphicon glyphicon-pencil"></span></button>';					
+					cHtml += '</td>';
+					cHtml += '</tr>';
+					if ($('#idTablaIDRPlaguicidas >tbody >tr').length == 0){
+			 			$("#idTablaIDRPlaguicidas").append("<tbody></tbody>");
+			 				//alert("Agregando un tbody a la tabla");
+					}
+					$("#idTablaIDRPlaguicidas tbody").append(cHtml);
+				});			
+			},				
+		}); // fin del ajax	
+	}) // fin de BtnAgregaAnalitosxMetodoLC
+	/**********************************************************************************************************/
+	$("#BtnAgregaAnalitosxMetodoGC").click(function(){ // agrega todos los analitos a la tabla x metodo LC
+		//obtener las variables que participan USANDO UN AJAX
+		$.ajax({
+			dataType:"json",
+			url:baseUrlCortaCorta+"obtener_todos_los_analitos_x_metodo_gc",
+			success: function(htmlResponse){
+				var objAnalitos = htmlResponse['RESULTADO'];				
+				//console.log(objAnalitos);
+				
+				$.each(objAnalitos,function(i,contenido){			
+					
+					console.log(contenido);
+					
+					var cAnalito 	= objAnalitos[i].NOMBRE_ANALITO;					
+					var cResultado 	= objAnalitos[i].RESULTADO_ANALITO;
+					var cLC 		= objAnalitos[i].LC_ANALITO;
+					var cLMP 		= objAnalitos[i].LMP_ANALITO;
+					//var cTecnica	= objAnalitos[i].TECNICA_ANALITO;
+					var cTecnica	= 'GC';
+					
+					//ANEXANDOLO AHORA A LA TABLA
+					cHtml = '<tr id="'+getRandomChars(6)+'">';
+					cHtml += '<td>'+cAnalito+'</td><td>'+cResultado+'</td><td>'+cLC+'</td><td>'+cLMP+'</td><td>'+cTecnica+'</td>';
+					cHtml += '<td>';
+					
+					cHtml += '<button type="button" class="btn btn-info btn-xs" onclick="deleteRowDetalladoIdrPlagicidas(this)" ><span class="glyphicon glyphicon-trash"></span></button>';
+					cHtml += '<button type="button" class="btn btn-info btn-xs" onclick="EditaRowDetalladoIdrPlagicidas(this)" ><span class="glyphicon glyphicon-pencil"></span></button>';					
+					cHtml += '</td>';
+					cHtml += '</tr>';
+					if ($('#idTablaIDRPlaguicidas >tbody >tr').length == 0){
+			 			$("#idTablaIDRPlaguicidas").append("<tbody></tbody>");
+			 				//alert("Agregando un tbody a la tabla");
+					}
+					$("#idTablaIDRPlaguicidas tbody").append(cHtml);
+				});			
+			},				
+		}); // fin del ajax	
+	}) // fin de BtnAgregaAnalitosxMetodoGC
+	/**************************************************************************************************/
 	
 }); // FIN DEL JQUERY

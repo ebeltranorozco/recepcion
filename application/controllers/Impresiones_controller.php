@@ -926,6 +926,7 @@ class Impresiones_controller extends CI_Controller {
 
 	//VARIABLES NUEVAS POR EL CUADRO DE IDR QUE ANTES ERA FACTURACION
 	$cRespTomaMuestra 	= ""; 
+    $dFechaHoraTomaMuestra = "";
 	$cNombreCte_IDR 	= "";
 	$cDireCte_IDR 		= "";
 	$cRfc_IDR 			= "";
@@ -949,6 +950,9 @@ class Impresiones_controller extends CI_Controller {
     $cTipoMuestra 	  = $data[0]->TIPO_MUESTRA;
     $cPesoVol		  = $data[0]->PESO_VOL_MUESTRA;
     $cTemperatura	  = $data[0]->TEMPERATURA_MUESTRA;
+
+    //2017-11-26
+    $dFechaHoraTomaMuestra = $data[0]->FECHA_HORA_TOMA_MUESTRA;
       
       // empezamos el pdf
     $this->load->library('pdf');
@@ -1047,27 +1051,36 @@ class Impresiones_controller extends CI_Controller {
 
     $this->pdf->ln(); 
 
-    //15/06/2017 AGREGANDO EL DESTINO DE LA MUESTRA
-    $this->pdf->setx($nPosEnc['col1']);
-    $this->pdf->cell($nPosEnc['col3']-$nPosEnc['col1'],$nInc,'Destino de la muestra:',1,0,'L');
-    $this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3'],$nInc,utf8_decode($cDestinoMuestra),1,2,'L');
+    
 
     
     
     $this->pdf->setx($nPosEnc['col1']);
-    if ($cRespTomaMuestra) {
-	$this->pdf->cell($nPosEnc['col3']-$nPosEnc['col1'],$nInc*2,'Responsable de la toma de muestra:',1,0,'L');	
-	$this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3'],$nInc*2,utf8_decode($cRespTomaMuestra),1,'L');
-	}else {
-		$this->pdf->cell($nPosEnc['col3']-$nPosEnc['col1'],$nInc,'Responsable de la toma de muestra:',1,0,'L');
-		$this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3'],$nInc,utf8_decode($cRespTomaMuestra),1,'L');
-	} 
-    
-    //$this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3'],$nInc,utf8_decode($cRespTomaMuestra),1,2,'L');
-    //MultiCell(float w, float h, string txt [, mixed border [, string align [, boolean fill]]])
-    
+    $this->pdf->cell($nPosEnc['col3']-$nPosEnc['col1'],$nInc,'Responsable de la toma de muestra:',1,0,'L'); 
+
+    if ($cRespTomaMuestra) {	   
+	   $this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3'],$nInc,utf8_decode($cRespTomaMuestra),1,'L');       
+	}else {		
+		$this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3'],$nInc,utf8_decode(""),1,'L');
+	}
     $this->pdf->ln(); 
+
+    $this->pdf->setx($nPosEnc['col1']);
+    $this->pdf->cell($nPosEnc['col3']-$nPosEnc['col1'],$nInc,'Fecha/Hora:',1,0,'L');
+    if ($dFechaHoraTomaMuestra ) {       
+       $this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3'],$nInc,utf8_decode($dFechaHoraTomaMuestra ),1,'L');       
+    }else {     
+        $this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3'],$nInc,utf8_decode("" ),1,'L');
+    }
+    $this->pdf->ln(); 
+
+
+    //15/06/2017 AGREGANDO EL DESTINO DE LA MUESTRA
+    $this->pdf->setx($nPosEnc['col1']);
+    $this->pdf->cell($nPosEnc['col3']-$nPosEnc['col1'],$nInc,'Destino de la muestra:',1,0,'L');
+    $this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3'],$nInc,utf8_decode($cDestinoMuestra),1,2,'L');
     
+    //$this->pdf->ln();     
 
     
     // TEMPORAL
@@ -1076,7 +1089,7 @@ class Impresiones_controller extends CI_Controller {
     //$r=$r+$nInc *9;
     $nInc = 10;
     
-    $nPosEnc = array('col1' => 10,'col2'=>25,'col3'=>50,'col4' =>95,'col5' => 110,'col6'=>125,'col7'=>160,'col8' =>255,'col9'=>270);
+    $nPosEnc = array('col1' => 10,'col2'=>25,'col3'=>50,'col4' =>95,'col5' => 110,'col6'=>125,'col7'=>160,'col8'=>205,'col9' =>250,'col10'=>270);
     
     $this->pdf->setx($nPosEnc['col1']);
     $this->pdf->SetFont('Arial','B',6);
@@ -1091,8 +1104,9 @@ class Impresiones_controller extends CI_Controller {
     $this->pdf->Multicelda($nPosEnc['col6']-$nPosEnc['col3'],$nInc/2,utf8_decode('DESCRIPCIÓN DE LA MUESTRA'),1,'C',1,true);
         
     $this->pdf->Multicelda($nPosEnc['col7']-$nPosEnc['col6'],$nInc,'LOTE / ORIGEN',1,'C',1,true);  
-    $this->pdf->Multicelda($nPosEnc['col8']-$nPosEnc['col7'],$nInc,'ENSAYO / METODOLOGIA',1,'C',1,true);    
-    $this->pdf->Multicelda($nPosEnc['col9']-$nPosEnc['col8'],$nInc,'IMPORTE',1,'C',1,true);      
+    $this->pdf->Multicelda($nPosEnc['col8']-$nPosEnc['col7'],$nInc,'ENSAYO',1,'C',1,true);    
+    $this->pdf->Multicelda($nPosEnc['col9']-$nPosEnc['col8'],$nInc,utf8_decode('MÉTODO'),1,'C',1,true);    
+    $this->pdf->Multicelda($nPosEnc['col10']-$nPosEnc['col9'],$nInc,'IMPORTE',1,'C',1,true);      
     
     
     $this->pdf->setxy($nPosEnc['col3'],$nRow+($nInc/2));
@@ -1126,7 +1140,7 @@ class Impresiones_controller extends CI_Controller {
 	
 	$r = $this->pdf->GetY();
     foreach ($data as $key => $value) { // ciclo de las metodoligas
-    	$this->pdf->SetFont('Arial','',8);	
+    	$this->pdf->SetFont('Arial','',7);	
     	//$r = $this->pdf->GetY();
     	
     	$this->pdf->setxy($nPosEnc['col1'],$r);
@@ -1135,8 +1149,9 @@ class Impresiones_controller extends CI_Controller {
         $this->pdf->MultiCell( $nPosEnc['col2']-$nPosEnc['col1'],$nInc,$this->utilerias->Personaliza_ID_MUESTRA($data[$i]->ID_MUESTRA),1,'C' );
         $this->pdf->setxy($nPosEnc['col2'],$r);
 		
-		$cId_Cliente = $data[$i]->ID_ASIGNADO_CLIENTE;
-        $this->pdf->MultiCell( $nPosEnc['col3']-$nPosEnc['col2'],$nInc,$cId_Cliente ,1,'C' );
+		$cId_Cliente = utf8_decode($data[$i]->ID_ASIGNADO_CLIENTE);
+        //$this->pdf->MultiCell( $nPosEnc['col3']-$nPosEnc['col2'],$nInc,$cId_Cliente ,1,'C' );
+        $this->pdf->MultiCelda( $nPosEnc['col3']-$nPosEnc['col2'],$nInc,$cId_Cliente,1,'C',0 );
         
         $cDestinoMuestra = $data[$i]->DESTINO_MUESTRA;		
 		$cCondiciones	  = $data[$i]->CONDICIONES_MUESTRA;
@@ -1160,15 +1175,19 @@ class Impresiones_controller extends CI_Controller {
         $this->pdf->MultiCell( $nPosEnc['col7']-$nPosEnc['col6'],$nInc,utf8_decode($data[$i]->LOTE_MUESTRA),1,'C',0 ); 
         
         $this->pdf->setXY($nPosEnc['col7'],$r);   
-        $cMetodologiaTMP = utf8_decode($data[$i]->METODOLOGIA_ESTUDIO);    
-        $this->pdf->cellHtml($nPosEnc['col8']-$nPosEnc['col7'],$nInc,$cMetodologiaTMP,1,'T' ,0 );
-        //$this->pdf->MultiCell( $nPosEnc['col8']-$nPosEnc['col7'],$nInc,utf8_decode($data[$i]->METODOLOGIA_ESTUDIO),1,'C',0 ); 
-               
+        $cEnsayoTMP = utf8_decode($data[$i]->ANALISIS_SOLICITADO);       
+        $this->pdf->cellHtml($nPosEnc['col8']-$nPosEnc['col7'],$nInc,$cEnsayoTMP,1,'T' ,0 );        
+        
+        $this->pdf->setXY($nPosEnc['col8'],$r);   
+        $cMetodologiaTMP = utf8_decode($data[$i]->METODOLOGIA_ESTUDIO);
+        //$cMetodologiaTMP = substr( $cMetodologiaTMP,0,strpos($cMetodologiaTMP," ")+5);
+        //$this->pdf->cellHtml($nPosEnc['col9']-$nPosEnc['col8'],$nInc,$cMetodologiaTMP,1,'T' ,0 );
+        $this->pdf->MultiCell( $nPosEnc['col9']-$nPosEnc['col8'],$nInc,($cMetodologiaTMP),1,'L',0 ); 
         
         
-        $this->pdf->setxy($nPosEnc['col8'],$r);
+        $this->pdf->setxy($nPosEnc['col9'],$r);
 
-        $this->pdf->MultiCell( $nPosEnc['col9']-$nPosEnc['col8'],$nInc,number_format($data[$i]->IMPORTE*25/29,2),1,'R' );
+        $this->pdf->MultiCell( $nPosEnc['col10']-$nPosEnc['col9'],$nInc,number_format($data[$i]->IMPORTE*25/29,2),1,'R' );
         
         
         $nTotalImporte = $nTotalImporte + $data[$i]->IMPORTE; // agregado 11/05/2017 para q empieze a desglozar el iva
@@ -1194,10 +1213,11 @@ class Impresiones_controller extends CI_Controller {
 		    //$this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3'],$nInc/2,utf8_decode('DESCRIPCIÓN DE LA MUESTRA'),1,0,'C',true);
 		    $this->pdf->Multicelda($nPosEnc['col6']-$nPosEnc['col3'],$nInc/2,utf8_decode('DESCRIPCIÓN DE LA MUESTRA'),1,'C',1,true);
 		        
-		    $this->pdf->Multicelda($nPosEnc['col7']-$nPosEnc['col6'],$nInc,'LOTE / ORIGEN',1,'C',1,true);  
-		    $this->pdf->Multicelda($nPosEnc['col8']-$nPosEnc['col7'],$nInc,'ENSAYO / METODOLOGIA',1,'C',1,true);    
-		    $this->pdf->Multicelda($nPosEnc['col9']-$nPosEnc['col8'],$nInc,'IMPORTE',1,'C',1,true);      
-		    
+		    		    
+            $this->pdf->Multicelda($nPosEnc['col7']-$nPosEnc['col6'],$nInc,'LOTE / ORIGEN',1,'C',1,true);  
+            $this->pdf->Multicelda($nPosEnc['col8']-$nPosEnc['col7'],$nInc,'ENSAYO',1,'C',1,true);    
+            $this->pdf->Multicelda($nPosEnc['col9']-$nPosEnc['col8'],$nInc,utf8_decode('MÉTODO'),1,'C',1,true);    
+            $this->pdf->Multicelda($nPosEnc['col10']-$nPosEnc['col9'],$nInc,'IMPORTE',1,'C',1,true); 
 		    
 		    $this->pdf->setxy($nPosEnc['col3'],$nRow+($nInc/2));
 		    
@@ -1252,8 +1272,9 @@ class Impresiones_controller extends CI_Controller {
 	    $this->pdf->Multicelda($nPosEnc['col6']-$nPosEnc['col3'],$nInc/2,utf8_decode('DESCRIPCIÓN DE LA MUESTRA'),1,'C',1,true);
 	        
 	    $this->pdf->Multicelda($nPosEnc['col7']-$nPosEnc['col6'],$nInc,'LOTE / ORIGEN',1,'C',1,true);  
-	    $this->pdf->Multicelda($nPosEnc['col8']-$nPosEnc['col7'],$nInc,'ENSAYO / METODOLOGIA',1,'C',1,true);    
-	    $this->pdf->Multicelda($nPosEnc['col9']-$nPosEnc['col8'],$nInc,'IMPORTE',1,'C',1,true);      
+        $this->pdf->Multicelda($nPosEnc['col8']-$nPosEnc['col7'],$nInc,'ENSAYO',1,'C',1,true);    
+        $this->pdf->Multicelda($nPosEnc['col9']-$nPosEnc['col8'],$nInc,utf8_decode('MÉTODO'),1,'C',1,true);    
+        $this->pdf->Multicelda($nPosEnc['col10']-$nPosEnc['col9'],$nInc,'IMPORTE',1,'C',1,true);    
 	    
 	    
 	    $this->pdf->setxy($nPosEnc['col3'],$nRow+($nInc/2));
@@ -1267,8 +1288,12 @@ class Impresiones_controller extends CI_Controller {
 	    $r = $this->pdf->GetY();  
 	    $this->pdf->SetFont('Arial','',8);  	
 	}
+    if ($r>165){ // por las leyendas
+        $this->pdf->AddPage('l','letter'); 
+        $r = $this->pdf->GetY();
+    }
 	
-	$this->pdf->setxy($nPosEnc['col7'],$r);
+	$this->pdf->setxy($nPosEnc['col8'],$r);
 
     // imprimiendo la parte de abajo de los subtotales y eso
     $this->pdf->cell($nPosEnc['col8']-$nPosEnc['col7'],$nInc2, 'Costo de Servicios',0,2,'R');
@@ -1278,17 +1303,16 @@ class Impresiones_controller extends CI_Controller {
     $this->pdf->cell($nPosEnc['col8']-$nPosEnc['col7'],$nInc2, 'IVA(_%)',0,2,'R');
     $this->pdf->cell($nPosEnc['col8']-$nPosEnc['col7'],$nInc2, 'Total',0,2,'R');
     
-    $this->pdf->setxy($nPosEnc['col8'],$r);
+    $this->pdf->setxy($nPosEnc['col9'],$r);
     
     $nTmp = 0;  // campo que sera sustituido por costo de servicios, de envio y otros cocepto    
     
-    
-    $this->pdf->cell($nPosEnc['col9']-$nPosEnc['col8'],$nInc2, number_format($nTotalImporte *25/29,2) ,1,2,'R');    
+    $this->pdf->cell($nPosEnc['col10']-$nPosEnc['col9'],$nInc2, number_format($nTotalImporte *25/29,2) ,1,2,'R');    
     //$this->pdf->cell($nPosEnc['col9']-$nPosEnc['col8'],$nInc2, number_format($nCosto_Envio*25/29,2) ,1,2,'R');    
-    $this->pdf->cell($nPosEnc['col9']-$nPosEnc['col8'],$nInc2, number_format($nOtrosServicios*25/29,2) ,1,2,'R');    
-    $this->pdf->cell($nPosEnc['col9']-$nPosEnc['col8'],$nInc2, number_format(($nTotalImporte+$nCosto_Envio+$nOtrosServicios) * 25/29,2) ,1,2,'R');    
-    $this->pdf->cell($nPosEnc['col9']-$nPosEnc['col8'],$nInc2, number_format(($nTotalImporte+$nCosto_Envio+$nOtrosServicios) * 4/29,2) ,1,2,'R'); 
-    $this->pdf->cell($nPosEnc['col9']-$nPosEnc['col8'],$nInc2, number_format($nTotalImporte+$nCosto_Envio+$nOtrosServicios,2) ,1,2,'R'); 
+    $this->pdf->cell($nPosEnc['col10']-$nPosEnc['col9'],$nInc2, number_format($nOtrosServicios*25/29,2) ,1,2,'R');    
+    $this->pdf->cell($nPosEnc['col10']-$nPosEnc['col9'],$nInc2, number_format(($nTotalImporte+$nCosto_Envio+$nOtrosServicios) * 25/29,2) ,1,2,'R');    
+    $this->pdf->cell($nPosEnc['col10']-$nPosEnc['col9'],$nInc2, number_format(($nTotalImporte+$nCosto_Envio+$nOtrosServicios) * 4/29,2) ,1,2,'R'); 
+    $this->pdf->cell($nPosEnc['col10']-$nPosEnc['col9'],$nInc2, number_format($nTotalImporte+$nCosto_Envio+$nOtrosServicios,2) ,1,2,'R'); 
     
     
     // imprimiendo las leyendas 
@@ -1309,96 +1333,106 @@ class Impresiones_controller extends CI_Controller {
 		$this->pdf->cell(80,$nInc2,utf8_decode($cLeyendaReconocido),0,2);
 	}
     
-    //imprimiendo los 3 cuadros finales
-    
-    $r = $r+30;
-    
-    if ( $r > 135 ) { 
+    //imprimiendo los 3 cuadros finales    
+    $r = $this->pdf->getY();   
+    if ( $r > 170 ) { 
     	$this->pdf->AddPage('l','letter'); 
     	$r = $this->pdf->GetY();
-	}       
+	} 
+    $nPosEnc = array('col1' => 10,'col1.1'=>30,'col2'=>80,'col2.1'=>100,'col3'=>150,'col4' =>215,'col5'=>270);
+    // 2017-11-28 --> ANEXANDO AL NUEVO FORMATO LAS CONDICIONES Y OBSERVACIONES..!
     
-    $nPosEnc2 = array('col1' => 10,'col2'=>105,'col3'=>185,'col4' =>270);
-    $this->pdf->setxy($nPosEnc2['col1'],$r);
+    $nRowIni = $this->pdf->getY();
+    $nInc3 = 3;
+
+    $this->pdf->setXY($nPosEnc['col1'],$r+1);    
+    
+    if (isset($data[0]->CONDICIONES_MUESTRA)) {  
+        $this->pdf->SetFont('Arial','B',8); 
+        $this->pdf->cell(0,$nInc3,utf8_decode('Condiciones de recepción de la muestra:'),0,2);   
+        $this->pdf->SetFont('Arial','',8);         
+        $this->pdf->multicell(0,$nInc3,utf8_decode($data[0]->CONDICIONES_MUESTRA),'0','J',false );    
+    }else {
+        $this->pdf->cell(0,$nInc3*2,utf8_decode('Condiciones de recepción de la muestra:'),0,2);   
+    }    
+    $this->pdf->rect($nPosEnc['col1'],$nRowIni,$nPosEnc['col5']-$nPosEnc['col1'],$this->pdf->getY()-$nRowIni);
+
+    // AHORA LAS OBSERVACIONES
+    $r = $this->pdf->getY();    
+    if ( $r > 170 ) { 
+        $this->pdf->AddPage('l','letter'); 
+        $r = $this->pdf->GetY();
+    } 
+    $nRowIni = $this->pdf->getY();
+    $this->pdf->setXY($nPosEnc['col1'],$r+1);
+    if (isset($data[0]->OBSERVACIONES_RECEPCION)) {  
+        $this->pdf->SetFont('Arial','B',8); 
+        $this->pdf->cell(0,$nInc3,utf8_decode('Observaciones:'),0,2);   
+        $this->pdf->SetFont('Arial','',8);         
+        $this->pdf->multicell(0,$nInc3,utf8_decode($data[0]->OBSERVACIONES_RECEPCION),'0','J',false );    
+    }else {
+        $this->pdf->cell(0,$nInc3*2,utf8_decode('Observaciones:'),0,2);   
+    }    
+    $this->pdf->rect($nPosEnc['col1'],$nRowIni,$nPosEnc['col5']-$nPosEnc['col1'],$this->pdf->getY()-$nRowIni);
+    $this->pdf->ln( $nInc3);
+
+    // LOS CUADROS DE ABAJO
+    $r = $this->pdf->getY();   
+    if ( $r > 180 ) { 
+        $this->pdf->AddPage('l','letter'); 
+        $r = $this->pdf->GetY();
+    } 
     $nInc3 = 4;
-    
-    
-    
-    $this->pdf->SetFont('Arial','B',8);
-    $this->pdf->cell($nPosEnc2['col2']-$nPosEnc2['col1'],$nInc3,'RECEPCION',1,0,'C',true);
-    $this->pdf->cell($nPosEnc2['col3']-$nPosEnc2['col2'],$nInc3,'CLIENTE',1,0,'C',true);
-    $this->pdf->cell($nPosEnc2['col4']-$nPosEnc2['col3'],$nInc3,utf8_decode('ENVÍO DE RESULTADOS'),1,0,'C',true);
-    
+    $this->pdf->SetFont('Arial','B',7);
+    $this->pdf->setXY($nPosEnc['col1'],$r);
+    $this->pdf->cell($nPosEnc['col2']-$nPosEnc['col1'],$nInc3,'RECEPCION',1,2,'C',true);
     $this->pdf->SetFont('Arial','',8);
-    $r=$r+$nInc3;
-    $this->pdf->setxy($nPosEnc2['col1'],$r);
-	
-
-    $this->pdf->text($nPosEnc2['col1']+1,$r+3,'Recibido por (nombre y firma):');
-    $this->pdf->text($nPosEnc2['col1']+5,$r+7,utf8_decode($_SESSION['user_nombre']) );
-    $this->pdf->rect($nPosEnc2['col1'],$r,$nPosEnc2['col2']-$nPosEnc2['col1'],$nInc3+$nInc3);
+    $nRowIni = $this->pdf->getY();    
+    $this->pdf->cell($nPosEnc['col2']-$nPosEnc['col1'],$nInc3,'Recibido por (nombre y firma):',0,2,'L',false);
+    $cNomUserRealizoCaptura = $this->db->query('select NOMBRE_USUARIO from usuarios where id_usuario = '.$data[0]->ID_USUARIO)->row();
+    $cNomUserRealizoCaptura = $cNomUserRealizoCaptura->NOMBRE_USUARIO;
+    //$this->pdf->cell($nPosEnc['col3.5']-$nPosEnc['col1'],$nInc/2,$cNomUserRealizoCaptura,0,1,'C' );    
     
-    $this->pdf->text($nPosEnc2['col2']+1,$r+3,'Entregado por (nombre y firma):');
-    //utf8_decode($data[0]->NOMBRE_CLIENTE )
-    $this->pdf->text($nPosEnc2['col2']+5,$r+7, ' ');
-    $this->pdf->rect($nPosEnc2['col2'],$r,$nPosEnc2['col3']-$nPosEnc2['col2'],$nInc3+$nInc3);
-    
-    $this->pdf->text($nPosEnc2['col3']+1,$r+3,utf8_decode('Atención a:'));
-    $this->pdf->rect($nPosEnc2['col3'],$r,$nPosEnc2['col4']-$nPosEnc2['col3'],$nInc3+$nInc3);
-
-    $r=$r+$nInc3+$nInc3;
-    $this->pdf->setxy($nPosEnc2['col1'],$r);
-    
-
-	
-    $this->pdf->text($nPosEnc2['col1']+1,$r+$nInc3-1,'Fecha/Hora: '.$data[0]->FECHA_RECEPCION );    
-    $this->pdf->rect($nPosEnc2['col1'],$r,$nPosEnc2['col2']-$nPosEnc2['col1'],$nInc3);
-    
+    $this->pdf->cell($nPosEnc['col2']-$nPosEnc['col1'],$nInc3,utf8_decode($cNomUserRealizoCaptura),0,2,'C',false);
     $dFechaX = substr($data[0]->FECHA_RECEPCION,0,10);
-    $this->pdf->text($nPosEnc2['col2']+1,$r+$nInc3-1,'Fecha/Hora: '.$dFechaX );    
-    //$this->pdf->text($nPosEnc2['col2']+1,$r+$nInc3-1,'Fecha2: '.date('Y-m-d') );    
-    $this->pdf->rect($nPosEnc2['col2'],$r,$nPosEnc2['col3']-$nPosEnc2['col2'],$nInc3);
+    $this->pdf->cell($nPosEnc['col1.1']-$nPosEnc['col1'],$nInc3,'Fecha/Hora:',1,0,'L',false);
+    $this->pdf->cell($nPosEnc['col2']-$nPosEnc['col1.1'],$nInc3,$data[0]->FECHA_RECEPCION,1,0,'L',false);
+    $this->pdf->rect($nPosEnc['col1'],$nRowIni,$nPosEnc['col2']-$nPosEnc['col1'],$nInc3*3);
     
-    $this->pdf->text($nPosEnc2['col3']+1,$r+$nInc3-1,utf8_decode('Impreso [ ]     email [ ]    paquetería [ ]'));
-    $this->pdf->rect($nPosEnc2['col3'],$r,$nPosEnc2['col4']-$nPosEnc2['col3'],$nInc3);
-
-
-    $r=$r+$nInc3;
-    $this->pdf->setxy($nPosEnc2['col1'],$r);
-    
-    //21/06/2017
-    
-    
-    $this->pdf->text($nPosEnc2['col1']+1,$r+2,utf8_decode('Condiciones de recepción de la muestra:'));
-    $this->pdf->ln(10);
-    
-    //$this->pdf->setxy($nPosEnc2['col1'],$r+2);
-	if (isset($data[0]->CONDICIONES_MUESTRA)) {  
-		$this->pdf->setxy($nPosEnc2['col1'],$r+2);
-		$this->pdf->multicell(90,$nInc/3,utf8_decode($data[0]->CONDICIONES_MUESTRA),'0','L',false );	
-	}
-	$this->pdf->rect($nPosEnc2['col1'],$r,95,$nInc3*6);
-	
-	//$this->pdf->setxy(95,$r);
-
-    $this->pdf->text(105+1,$r+2,'Observaciones:');    
-    if (isset($data[0]->OBSERVACIONES_RECEPCION)) { 
-    	$this->pdf->setxy(105,$r+2);    	
-    	$this->pdf->multicell(80,$nInc/3,utf8_decode($data[0]->OBSERVACIONES_RECEPCION),'0','L',false );    	
-    }
-    $this->pdf->rect($nPosEnc2['col1'],$r,$nPosEnc2['col3']-$nPosEnc2['col1'],$nInc3*6);
-	
-	
-    //REGISTRO DE ENTREGA DE RESULTADOS
-    $this->pdf->setxy( $nPosEnc2['col3'],$r)   ;
-    $this->pdf->SetFont('Arial','B',8);
-    $this->pdf->cell($nPosEnc2['col4']-$nPosEnc2['col3'],$nInc3*2,'REGISTRO DE ENTREGA DE RESULTADOS',1,2,'C',true);
+    $this->pdf->SetFont('Arial','B',7);
+    $this->pdf->setXY($nPosEnc['col2'],$r);
+    $this->pdf->cell($nPosEnc['col2']-$nPosEnc['col1'],$nInc3,'CLIENTE',1,2,'C',true);
     $this->pdf->SetFont('Arial','',8);
-    $this->pdf->cell($nPosEnc2['col4']-$nPosEnc2['col3'],$nInc3*2,'No. Informe:',1,2,'L');
-    $this->pdf->cell($nPosEnc2['col4']-$nPosEnc2['col3'],$nInc3*2,'Recibido por (nombre y firma):',1,2,'L');   
-   
-   
-   
+    $nRowIni = $this->pdf->getY();    
+    $this->pdf->cell($nPosEnc['col2']-$nPosEnc['col1'],$nInc3,'Entregado por (nombre y firma):',0,2,'L',false);
+    $this->pdf->cell($nPosEnc['col2']-$nPosEnc['col1'],$nInc3,utf8_decode(""),0,2,'C',false);
+    $dFechaX = substr($data[0]->FECHA_RECEPCION,0,10);
+    $this->pdf->cell($nPosEnc['col2.1']-$nPosEnc['col2'],$nInc3,'Fecha/Hora:',1,0,'L',false);
+    $this->pdf->cell($nPosEnc['col3']-$nPosEnc['col2.1'],$nInc3,"",1,0,'L',false);
+    $this->pdf->rect($nPosEnc['col2'],$nRowIni,$nPosEnc['col3']-$nPosEnc['col2'],$nInc3*3);
+    // ENVIO DE RESULTADOS CUADRO
+    $this->pdf->SetFont('Arial','B',7);
+    $this->pdf->setXY($nPosEnc['col3'],$r);
+    $this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3'],$nInc3,utf8_decode('ENVÍO DE RESULTADOS'),1,2,'C',true);
+    $this->pdf->SetFont('Arial','',8);
+    $nRowIni = $this->pdf->getY();    
+    $this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3'],$nInc3,utf8_decode('Atención a'),0,2,'L',false);
+    $this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3'],$nInc3,utf8_decode(""),0,2,'C',false);
+    $this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3'],$nInc3,utf8_decode('Impreso [ ] email [ ] paquetería [ ]'),0,2,'C',false);
+    $this->pdf->rect($nPosEnc['col3'],$nRowIni,$nPosEnc['col4']-$nPosEnc['col3'],$nInc3*3);
+    //REGISTRO DE ENTREGA DE RESULTADOS..!
+    $this->pdf->SetFont('Arial','B',7);
+    $this->pdf->setXY($nPosEnc['col4'],$r);
+    $this->pdf->cell($nPosEnc['col5']-$nPosEnc['col4'],$nInc3,utf8_decode('REGISTRO DE ENTREGA DE RESULTADOS'),1,2,'C',true);
+    $this->pdf->SetFont('Arial','',8);
+    $nRowIni = $this->pdf->getY();    
+    $this->pdf->cell($nPosEnc['col5']-$nPosEnc['col4'],$nInc3,utf8_decode('No. Informe'),0,2,'L',false);
+    $this->pdf->cell($nPosEnc['col5']-$nPosEnc['col4'],$nInc3,utf8_decode("Recibido por (nombre y firma):"),0,2,'C',false);
+    $this->pdf->cell($nPosEnc['col5']-$nPosEnc['col4'],$nInc3,utf8_decode(''),0,2,'C',false);
+    $this->pdf->rect($nPosEnc['col4'],$nRowIni,$nPosEnc['col5']-$nPosEnc['col4'],$nInc3*3);    
+    
+	  
+
     $this->pdf->SetDisplayMode('fullpage','single');
     $cNombreArchivo = date('y')."-".$nFolio;    
           
@@ -1408,7 +1442,255 @@ class Impresiones_controller extends CI_Controller {
   /*******************************************************************************************  
   **********************************************************************************************/
   public function EntregaMuestra($idFolio2 = 'null'){
+  	$idFolio = 71;
+    if (isset($idFolio2)) {
+        $idFolio = $idFolio2;
+    }
 
+    $data = $this->estudios_model->getAllEstudio($idFolio);
+
+    if (count($data)== 0) {
+            echo '<script>alert("Error Folio ['.$idFolio.' ] Inexistente" );window.close();</script>';    
+        exit();
+    }
+    // CARGANDO LAS VARIABLES
+    //$nFolio          = str_pad($data[0]->ID_RECEPCION_MUESTRA,4,'0',STR_PAD_LEFT);
+    //$dFechaHora      = $data[0]->FECHA_RECEPCION;
+    $cNombreCte      = utf8_decode($data[0]->NOMBRE_CLIENTE);
+    $cDireCte         = utf8_decode($data[0]->DOMICILIO_CLIENTE);
+    $cRfc             = $data[0]->RFC_CLIENTE;
+    $cTel             = $data[0]->TELEFONO_CLIENTE;
+    $cContacto        = utf8_decode($data[0]->CONTACTO_CLIENTE);
+    $cEmail           = $data[0]->EMAIL_CLIENTE;     
+
+	// 24/05/2017
+ 	$nFolio          = date('y').'-'.str_pad($data[0]->ID_RECEPCION_MUESTRA,4,'0',STR_PAD_LEFT);
+    $dFechaHora      = strtotime($data[0]->FECHA_RECEPCION);
+    $dFechaHora      = date('Y-m-d H:i:s',$dFechaHora);
+      
+      // empezamos el pdf
+    $this->load->library('pdf');
+    $this->pdf = new pdf();
+    $this->pdf->setNombreReporte('Entrega de Muestras');    
+    $this->pdf->AddPage('l','letter'); //l landscape o P normal
+    $this->pdf->AliasNbPages();
+    $this->pdf->SetFillColor(237, 237, 237);
+    $this->pdf->SetMargins(5,20,10);
+    $this->pdf->SetAutoPageBreak( 'true' , 15 ) ; // indica que debe brincar a otra pagina cuando el margen llegue a 30 cm antes del final
+    $this->pdf->AliasNbPages();
+    
+    $nPosEnc = array('col1' => 10,'col2'=>35,'col3'=>60,'col3.5'=>80,'col4'=>110,'col5' =>140,'col6' => 160,'col7'=>176,'col8'=>190,'col9' =>205,'col10'=>225,'col11'=>270);
+
+    
+    $r = 25;
+    $nInc = 5;
+    $this->pdf->setxy($nPosEnc['col4'],$r);
+    $this->pdf->SetFont('Arial','B',7);
+    $this->pdf->cell($nPosEnc['col7']-$nPosEnc['col4'],$nInc,'REGISTRO DEL SERVICIO',1,0,'C',true);
+    $this->pdf->cell($nPosEnc['col8']-$nPosEnc['col7'],$nInc,'Folio:',1,0,'C',true);
+    $this->pdf->SetFont('Arial','',7);    
+    $this->pdf->cell($nPosEnc['col9']-$nPosEnc['col8'],$nInc,$nFolio,1,0,'L');
+    $this->pdf->cell($nPosEnc['col10']-$nPosEnc['col9'],$nInc,'Fecha/Hora:',1,0,'L',true);
+    $this->pdf->cell($nPosEnc['col11']-$nPosEnc['col10'],$nInc,$dFechaHora,1,2,'L');
+    
+    $r = $this->pdf->getY();
+
+    $this->pdf->setxy($nPosEnc['col7'],$r);
+    $this->pdf->SetFont('Arial','B',7);
+    $this->pdf->multicell($nPosEnc['col9']-$nPosEnc['col7'],$nInc,utf8_decode('Responsable de la toma de muestra:'),1,'R',true);
+    
+    $this->pdf->SetFont('Arial','',7);
+    $this->pdf->setxy($nPosEnc['col9'],$r);
+    $cRespTomaMuestra = "";
+    if ($data[0]->TOMO_MUESTRA!=null) { $cRespTomaMuestra = $data[0]->TOMO_MUESTRA; }
+    
+    $this->pdf->multicell($nPosEnc['col11']-$nPosEnc['col9'],$nInc*2,utf8_decode($cRespTomaMuestra),1,'C');   
+    
+    $r = $this->pdf->getY();
+    $this->pdf->setxy($nPosEnc['col7'],$r);
+    $this->pdf->SetFont('Arial','B',7);
+    $this->pdf->cell($nPosEnc['col9']-$nPosEnc['col7'],$nInc,utf8_decode('Fecha/hora:'),1,0,'R',true);
+    $dFechaHoraTomaMuestra = "";
+    if ($data[0]->FECHA_HORA_TOMA_MUESTRA){ $dFechaHoraTomaMuestra = $data[0]->FECHA_HORA_TOMA_MUESTRA;}
+    $this->pdf->cell($nPosEnc['col11']-$nPosEnc['col9'],$nInc,$dFechaHoraTomaMuestra,1,2,'C');
+
+    
+    $this->pdf->ln($nInc);
+    $r = $this->pdf->getY();
+  
+   
+    //$r=$r+$nInc+5;
+    $nInc = 10;
+    $nPosEnc = array('col1' => 10,'col2'=>35,'col3'=>60,'col3.5'=>90,'col4'=>110,'col5' =>140,'col6' => 160,'col7'=>176,'col8'=>190,'col9' =>205,'col10'=>225,'col11'=>270);
+    
+    // 2017-11-30 --> SE ANEXO UNA FUNCION ENCABEZADO DE LA TABLA DE ENTREGA DE MUESTRA
+    $this->encabezado_tabla_entrega_muestra( $nPosEnc,$nInc );  
+    
+    $this->pdf->setx($nPosEnc['col1']);    
+    $this->pdf->SetFont('Arial','',7);
+
+	// IMPRIMIENDO AHORA SI LOS CAMPOS
+    $i = 0;
+    //$r=$r+10;
+    $nInc = 12;
+    $this->pdf->SetFont('Arial','',7);
+    
+    $nTotalImporte = 0; // 11/05/2017
+    $cLeyenda = "";
+
+	$this->load->library('utilerias');
+	$r = $this->pdf->GetY();
+    foreach ($data as $key => $value) { // ciclo de las metodoligas
+        
+        $this->pdf->setxy($nPosEnc['col1'],$r);
+      	        
+        $this->pdf->multicell( $nPosEnc['col2']-$nPosEnc['col1'],$nInc,$this->utilerias->Personaliza_ID_MUESTRA($data[$i]->ID_MUESTRA),1,'C' );
+        $this->pdf->setxy($nPosEnc['col2'],$r);
+		
+		$nAlturaPagina = $this->pdf->GetPageHeight();
+        //$this->pdf->multicell( $nPosEnc['col3']-$nPosEnc['col2'],$nInc,$data[$i]->ID_ASIGNADO_CLIENTE,1,'C' );
+        $this->pdf->MultiCelda( $nPosEnc['col3']-$nPosEnc['col2'],$nInc,utf8_decode($data[$i]->ID_ASIGNADO_CLIENTE),1,'C',0 );
+        
+        
+        
+        $cDestinoMuestra = $data[$i]->DESTINO_MUESTRA;		
+		$cCondiciones	  = $data[$i]->CONDICIONES_MUESTRA;
+    	$cTipoMuestra 	  = $data[$i]->TIPO_MUESTRA;
+    	$cPesoVol		  = $data[$i]->PESO_VOL_MUESTRA;
+    	$cTemperatura	  = $data[$i]->TEMPERATURA_MUESTRA;
+        
+        $this->pdf->setxy($nPosEnc['col3'],$r);        
+        $this->pdf->MultiCelda( $nPosEnc['col4']-$nPosEnc['col3'],$nInc,utf8_decode($cTipoMuestra),1,'C',0 ); 
+        
+        $this->pdf->setXY($nPosEnc['col4'],$r);
+        $this->pdf->MultiCelda( $nPosEnc['col5']-$nPosEnc['col4'],$nInc,utf8_decode($data[$i]->PESO_VOL_MUESTRA),1,'C',0 ); 
+        
+        $this->pdf->setXY($nPosEnc['col5'],$r);
+        $this->pdf->cell( $nPosEnc['col6']-$nPosEnc['col5'],$nInc,utf8_decode($cTemperatura),1,0,'C' );
+
+        $this->pdf->setxy($nPosEnc['col6'],$r);        
+        //$this->pdf->MultiCell( $nPosEnc['col7']-$nPosEnc['col6'],$nInc,utf8_decode($data[$i]->LOTE_MUESTRA),1,'C',0 ); 
+        $this->pdf->MultiCelda( $nPosEnc['col7']-$nPosEnc['col6'],$nInc,utf8_decode($data[$i]->LOTE_MUESTRA),1,'C',0 ); 
+
+        //2017-11-30 --> SEPARACION DEENSAYO Y  METODOLOGIA
+        $this->pdf->setXY($nPosEnc['col7'],$r);   
+        $cEnsayoTMP = utf8_decode($data[$i]->ANALISIS_SOLICITADO);       
+        $this->pdf->cellHtml($nPosEnc['col10']-$nPosEnc['col7'],$nInc,$cEnsayoTMP,1,'T' ,0 );        
+        
+        $this->pdf->setXY($nPosEnc['col10'],$r);   
+        $cMetodologiaTMP = utf8_decode($data[$i]->METODOLOGIA_ESTUDIO);
+        //$cMetodologiaTMP = substr( $cMetodologiaTMP,0,strpos($cMetodologiaTMP," "));
+        $this->pdf->cell($nPosEnc['col11']-$nPosEnc['col10'],$nInc,$cMetodologiaTMP,1,2,'L' );
+        
+        $this->pdf->ln($nInc);
+        $r = $r + $nInc ; // incrementamos por cada renglon 5
+        
+        $i++;  
+        //if ( $r+20 > 170) { 
+        if ( $r > 180) { 
+    		$this->pdf->AddPage('l','letter');     		
+            $this->encabezado_tabla_entrega_muestra( $nPosEnc,$nInc );  
+            $r = $this->pdf->GetY();
+		}        
+    } // fin del foreach AQUI TERMINA EL CICLO	
+    $this->pdf->setXY( $nPosEnc['col1'],$r);
+    $this->pdf->ln($nInc/3);    
+    
+    //$r = $r+$nInc;
+    // anexado 2017-11-30
+    $r = $this->pdf->getY();
+    if ( $r > 180 ) { 
+        $this->pdf->AddPage('l','letter');
+        //$this->encabezado_tabla_entrega_muestra( $nPosEnc,$nInc );
+        $r = $this->pdf->GetY();
+    } 
+    
+    // 2017-11-28 --> ANEXANDO AL NUEVO FORMATO LAS CONDICIONES Y OBSERVACIONES..!    
+    $nRowIni = $this->pdf->getY();
+    $nInc3 = 3;
+
+    $this->pdf->setXY($nPosEnc['col1'],$r+1);
+    
+    if (isset($data[0]->CONDICIONES_MUESTRA)) {  
+        $this->pdf->SetFont('Arial','B',7); 
+        $this->pdf->cell($nPosEnc['col11']-$nPosEnc['col1'],$nInc3,utf8_decode('Condiciones de recepción de la muestra:'),0,2);   
+        $this->pdf->SetFont('Arial','',7);         
+        $this->pdf->multicell($nPosEnc['col11']-$nPosEnc['col1'],$nInc3,utf8_decode($data[0]->CONDICIONES_MUESTRA),'0','J',false );    
+    }else {
+        $this->pdf->cell(0,$nInc3*2,utf8_decode('Condiciones de recepción de la muestra:'),0,2);   
+    }    
+    $this->pdf->rect($nPosEnc['col1'],$nRowIni,$nPosEnc['col11']-$nPosEnc['col1'],$this->pdf->getY()-$nRowIni);
+
+    // AHORA LAS OBSERVACIONES
+    $r = $this->pdf->getY();
+    if ( $r > 170 ) { 
+        $this->pdf->AddPage('l','letter');
+        $r = $this->pdf->GetY();
+    } 
+    // AHORA LAS OBSERVACIONES..!    
+    
+    $nRowIni = $this->pdf->getY();
+    $nInc3 = 3;
+
+    $this->pdf->setXY($nPosEnc['col1'],$r+1);    
+    
+    if (isset($data[0]->OBSERVACIONES_RECEPCION)) {  
+        $this->pdf->SetFont('Arial','B',7); 
+        $this->pdf->cell($nPosEnc['col11']-$nPosEnc['col1'],$nInc3,utf8_decode('Observaciones:'),0,2);   
+        $this->pdf->SetFont('Arial','',7);         
+        $this->pdf->multicell($nPosEnc['col11']-$nPosEnc['col1'],$nInc3,utf8_decode($data[0]->OBSERVACIONES_RECEPCION),'0','J',false );    
+    }else {
+        $this->pdf->cell(0,$nInc3*2,utf8_decode('Observaciones:'),0,2);   
+    }    
+    $this->pdf->rect($nPosEnc['col1'],$nRowIni,$nPosEnc['col11']-$nPosEnc['col1'],$this->pdf->getY()-$nRowIni);    
+    // fin delo anexado 3011/17
+    $this->pdf->ln($nInc/2);
+
+    $r = $this->pdf->getY();
+    if ( $r > 180) { 
+        $this->pdf->AddPage('l','letter'); 
+        $r = $this->pdf->GetY();
+    }
+
+    
+    $this->pdf->setxy($nPosEnc['col1'],$r);
+    $nInc3 = 4;
+    
+    $this->pdf->SetFont('Arial','B',7);
+    $this->pdf->cell($nPosEnc['col3.5']-$nPosEnc['col1'],$nInc3,utf8_decode('RECEPCIÓN'),1,0,'C',true);
+    $this->pdf->cell($nPosEnc['col7']-$nPosEnc['col3.5'],$nInc3,utf8_decode('RECIBIDO POR (Área)'),1,1,'C',true);    
+    $this->pdf->SetFont('Arial','',7);
+    
+    //$this->pdf->ln();
+    $r = $this->pdf->GetY();
+    $this->pdf->setXY($nPosEnc['col1'],$r);   
+    $this->pdf->cell($nPosEnc['col3.5']-$nPosEnc['col1']+1,$nInc/2,'Recibido por(nombre y firma):',0,0,'L'); 
+    $this->pdf->cell($nPosEnc['col7']-$nPosEnc['col3.5']+1,$nInc/2,'Recibido por(nombre y firma):',0,1,'L');
+    $this->pdf->setX($nPosEnc['col1']); 
+    //$this->pdf->cell($nPosEnc['col3.5']-$nPosEnc['col1'],$nInc/2,$_SESSION['user_nombre'],0,1,'C' );  -->2017-12-01  
+    $cNomUserRealizoCaptura = $this->db->query('select NOMBRE_USUARIO from usuarios where id_usuario = '.$data[0]->ID_USUARIO)->row();
+    $cNomUserRealizoCaptura = $cNomUserRealizoCaptura->NOMBRE_USUARIO;
+    $this->pdf->cell($nPosEnc['col3.5']-$nPosEnc['col1'],$nInc/2,$cNomUserRealizoCaptura,0,1,'C' );    
+    $this->pdf->setX($nPosEnc['col1']); 
+    $this->pdf->rect($nPosEnc['col1'],$r,$nPosEnc['col3.5']-$nPosEnc['col1'],$this->pdf->getY()-$r);
+    $this->pdf->setX($nPosEnc['col1']); 
+    $this->pdf->rect($nPosEnc['col3.5'],$r,$nPosEnc['col7']-$nPosEnc['col3.5'],$this->pdf->getY()-$r);
+    
+
+    $this->pdf->setX($nPosEnc['col1']); 
+    $this->pdf->cell($nPosEnc['col2']-$nPosEnc['col1'],$nInc/2,'Fecha/hora:',1,0,'L');
+    $this->pdf->cell($nPosEnc['col3.5']-$nPosEnc['col2'],$nInc/2,$data[0]->FECHA_RECEPCION,1,0,'L');
+    $this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3.5'],$nInc/2,'Fecha/hora:',1,0,'L');
+    $this->pdf->cell($nPosEnc['col7']-$nPosEnc['col4'],$nInc/2,'',1,1,'L');  
+ 
+    $this->pdf->SetDisplayMode('fullpage','single');
+    $cNombreArchivo = date('y')."-".$nFolio;
+    $this->pdf->Output($cNombreArchivo,'I'); 
+
+	/**  
+	DE AQUI PARA ABAJO ES LA REVISION DEL FORMATO 10 
+	
+	
     $idFolio = 71;
     if (isset($idFolio2)) {
         $idFolio = $idFolio2;
@@ -1657,9 +1939,36 @@ class Impresiones_controller extends CI_Controller {
     $this->pdf->Output($cNombreArchivo,'I');
 	
 	
-  
+  */ // FIN DE LA TERMINACION DE LA REVISION 10
 
   }// fin de la funcion 
+  
+  /* *********************************************** */    
+  public function encabezado_tabla_entrega_muestra($nPosEnc,$nInc){
+    $this->pdf->setX($nPosEnc['col1']);
+    $this->pdf->SetFont('Arial','B',6);   
+    
+    $this->pdf->Multicelda($nPosEnc['col2']-$nPosEnc['col1'],$nInc,'ID DE MUESTRA',1,'C',1,true);    
+    $this->pdf->Multicelda($nPosEnc['col3']-$nPosEnc['col2'],$nInc,'ID ASIGNADA POR EL CLIENTE',1,'C',1,true);    
+    
+    //15/06/2017
+    $nRow = $this->pdf->gety();
+    
+    $this->pdf->Multicelda($nPosEnc['col6']-$nPosEnc['col3'],$nInc/2,utf8_decode('DESCRIPCIÓN DE LA MUESTRA'),1,'C',1,true);
+        
+    $this->pdf->Multicelda($nPosEnc['col7']-$nPosEnc['col6'],$nInc,'LOTE / ORIGEN',1,'C',1,true);  
+    $this->pdf->Multicelda($nPosEnc['col10']-$nPosEnc['col7'],$nInc,'ENSAYO',1,'C',1,true);  
+    $this->pdf->Multicelda($nPosEnc['col11']-$nPosEnc['col10'],$nInc,'METODOLOGIA',1,'C',1,true);  
+    
+    $this->pdf->setxy($nPosEnc['col3'],$nRow+($nInc/2));
+    
+    $this->pdf->cell($nPosEnc['col4']-$nPosEnc['col3'],$nInc/2,'TIPO DE MUESTRA',1,0,'C',true);
+    $this->pdf->cell($nPosEnc['col5']-$nPosEnc['col4'],$nInc/2,'PESO/VOL.',1,0,'C',true);
+    $this->pdf->cell($nPosEnc['col6']-$nPosEnc['col5'],$nInc/2,'TEMP.',1,0,'C',true);   
+
+    
+    $this->pdf->ln();
+  }
   /* *********************************************** */    
   public function idr_mercurio( $idDetalleMuestra = null) {
   	// lo primero es obtener los datos necesarios ..!

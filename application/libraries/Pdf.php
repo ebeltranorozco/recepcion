@@ -373,8 +373,7 @@
 			}			
         } 
 		/*************************************************************************************/     
-        public function Multicelda($ancho,$alto,$txt,$nBorde,$alig ,$nDesplaza ,$lFill =false ){
-        	//Multicelda($nPosEnc['col7']-$nPosEnc['col3'],$nInc,$cDireCte,0,'B',1,false);
+        public function Multicelda($ancho,$alto,$txt,$nBorde,$alig ,$nDesplaza ,$lFill =false ){        	
         	//obteniendo las posiciones actuales
         	$nPosXactual = $this->getX();
         	$nPosYactual = $this->getY();
@@ -394,11 +393,10 @@
         		$nInc = $alto/ count($mCad);
         	}
 
-
-        	$this->setxy($nPosXactual,$nPosYactual);
-        	for ($nPos = 0; $nPos  < count($mCad); $nPos++){
-				//$this->text($nPosXactual,$nPosYactual)
-				$this->cell($ancho-2,$nInc,$mCad[$nPos],0,2,$alig);
+        	$this->setXY($nPosXactual,$nPosYactual);
+        	for ($nPos = 0; $nPos  < count($mCad); $nPos++){				
+				//$this->cell($ancho-2,$nInc,$mCad[$nPos],0,2,$alig); -->2017-11-30
+				$this->cell($ancho,$nInc,$mCad[$nPos],0,2,$alig);
 			}
 			// por ultimo checamos pa donde se va a mover el apuntador de row y col
 			if ($nDesplaza == 2 ) { // movemos hacia abajo
@@ -567,14 +565,14 @@
 
 	           $this->SetXY(10,-10);
 	           $this->SetFont('Arial','',8);
-	           $this->cell(0,10,utf8_decode('Código: LARIA-GC-P004-F01 Revisión: 10'));
+	           $this->cell(0,10,utf8_decode('Código: LARIA-GC-P004-F01 Revisión: 11'));
 	           $this->Cell(0,10,utf8_decode('Página ').$this->PageNo().' de {nb}',0,0,'C');
 	       }
 	       if ($this->cNameReport == 'Entrega de Muestras') {
 	       		// HAY Q AGREGAR UN CAMPO QUE ME DEFINA EL NUMERO DE REVISION AUTOMATICAMENTE
 	           $this->SetXY(10,-10);
 	           $this->SetFont('Arial','',8);
-	           $this->cell(0,10,utf8_decode('Código: LARIA-GC-P004-F02 Revisión: 10'));
+	           $this->cell(0,10,utf8_decode('Código: LARIA-GC-P004-F02 Revisión: 11'));
 	           $this->Cell(0,10,utf8_decode('Página ').$this->PageNo().' de {nb}',0,0,'C');
 	       }
 

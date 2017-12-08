@@ -16,6 +16,7 @@ class Estudios_crud_model extends CI_Model
 	public function get_all_estudios()
 	{
 	$this->db->from($this->table);
+	$this->db->order_by('AREA_ESTUDIO,ALIAS_ESTUDIO');
 	$query=$this->db->get();
 	return $query->result();
 }
