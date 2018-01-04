@@ -70,6 +70,15 @@ class Estudios_model extends CI_Model {
         }else { $nRet = 1;}
     	return $nRet;    	
     }
+    /***********************************************************************************/
+    public function getFolioSolicitudRecepcion(){  // lo obtiene de la tabla folios    	
+        $cCad = "select FOLIO_SOLICITUD_RECEPCION from folios";
+    	$query = $this->db->query( $cCad)->row();
+        if ($query) {
+            $nRet = $query->FOLIO_SOLICITUD_RECEPCION;
+        }else { $nRet = 1;}
+    	return $nRet;    	
+    }
     /***************************************************************************************/
     /*public function getEstudio( $nEstudio = null) { // obtiene del catalogo 1 o todos los estudios
     	if ($nEstudio) { $this->db->where('id_estudio',$nEstudio);}

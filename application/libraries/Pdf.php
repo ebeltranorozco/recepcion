@@ -547,7 +547,7 @@
 				 IF ($this->cMetodoValidado == 'S') {
 				 	$this->Image('assets/img/ema_pie.jpg',141,$nRow-1,18);
 				 	$this->setXY(160,$nRow+4);
-				 	$this->cell(60,4,utf8_decode('Número de acreditación No. A-0733-074/16' ),0,2);
+				 	$this->cell(60,4,utf8_decode('Número de acreditación Nº. A-0733-074/16.' ),0,2);
 				 	$this->cell(60,4,utf8_decode('Fecha de Acreditación 2016-05-19.' ),0,1);	
 				 }			 
 				 
@@ -577,5 +577,8 @@
 	       }
 
       	}
+      	/* ************************************/
+      	
+		  
 	}
 ?>

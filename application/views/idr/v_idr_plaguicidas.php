@@ -76,7 +76,7 @@ if ($accion =="ALTA") {
 	$cTmp = utf8_decode($datos_metodologia->REFERENCIA_ESTUDIO);
 	$cReferencia['value'] = utf8_encode($cTmp);
 	
-	$cTmp = utf8_decode('ND = No detectado, No cuantificado, LC = Cromatógrafo de liquido, GC  = Cromatógrafo de Gases, LMP = Limite máximo permisible segun la ');
+	$cTmp = utf8_decode('ND = No detectado, No cuantificado, LC = Cromatógrafo de líquido, GC  = Cromatógrafo de Gases, LMP = Límite máximo permisible segun la ');
 	$cObsResultado['value'] = utf8_encode($cTmp);
 	
 	//$cObsResultado['value'] = 'prueba de como meterle algo';

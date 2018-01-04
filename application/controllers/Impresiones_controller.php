@@ -301,7 +301,14 @@ class Impresiones_controller extends CI_Controller {
   /***************************************************************/
   public function idr_encabezado( $data,$dFechaInicialAnalisis = null,$dFechaFinalAnalisis = null){ // encabezado para todos los IDR
 	$dFechaEmision      = date('Y-m-d h:m:s');	
-	//$this->load->library('utilerias');	
+	if (isset($data[0]->FECHA_PLAGUICIDAS)){ $dFechaEmision = $data[0]->FECHA_PLAGUICIDAS; }
+	if (isset($data[0]->FECHA_METALES)){ $dFechaEmision = $data[0]->FECHA_METALS; }
+	if (isset($data[0]->FECHA_AFLATOXINAS)){ $dFechaEmision = $data[0]->FECHA_AFLATOXINAS; }
+	if (isset($data[0]->FECHA_ALTA_MERCURIO)){ $dFechaEmision = $data[0]->FECHA_ALTA_MERCURIO; }
+	if (isset($data[0]->FECHA_ALTA_METALES)){ $dFechaEmision = $data[0]->FECHA_ALTA_METALES; }
+	if (isset($data[0]->FECHA_MICROBIOLOGIA)){ $dFechaEmision = $data[0]->FECHA_MICROBIOLOGIA; }
+	
+
 	// DATOS CLIENTE
     $cNombreCte         = utf8_decode($data[0]->NOMBRE_CLIENTE);
     if (!(empty($data[0]->NOMBRE_IDR_CLIENTE  )) ) {
@@ -355,7 +362,7 @@ class Impresiones_controller extends CI_Controller {
     
     $this->pdf->setxy($nPosEnc['col1'],$r+2);
 
-    $this->pdf->SetFont('Arial','B',$nFontSize+2);
+    $this->pdf->SetFont('Arial','B',$nFontSize+4);
     $this->pdf->cell(0,$nInc/2,'INFORME DE RESULTADOS',0,2,'C');
     $this->pdf->SetFont('Arial','',$nFontSize);
     $this->pdf->Multicelda($nPosEnc['col3']-$nPosEnc['col1'],$nInc/2,utf8_decode('Fecha/hora de Emisión:'),0,'C',1,false);
@@ -363,12 +370,12 @@ class Impresiones_controller extends CI_Controller {
     $this->pdf->Multicelda($nPosEnc['col5']-$nPosEnc['col3'],$nInc/2,$dFechaEmision,0,'L',1,false);
     $this->pdf->SetFont('Arial','',$nFontSize);
     $this->pdf->Multicelda($nPosEnc['col8']-$nPosEnc['col5'],$nInc/2,'IDR:',0,'R',1,false);
-    $this->pdf->SetFont('Arial','B',$nFontSize);
+    $this->pdf->SetFont('Arial','B',$nFontSize+2);
     $this->pdf->Multicelda($nPosEnc['col10']-$nPosEnc['col8'],$nInc/2,str_pad($data[0]->ID_IDR.'/'.date('y'),4,'0',STR_PAD_LEFT),0,'L',1,false);
     $this->pdf->ln($nInc/2);
     $this->pdf->SetFont('Arial','',$nFontSize);
     $this->pdf->Multicelda($nPosEnc['col8']-$nPosEnc['col1'],$nInc/2,'ID de Muestra:',0,'R',1,false);
-    $this->pdf->SetFont('Arial','B',$nFontSize);
+    $this->pdf->SetFont('Arial','B',$nFontSize+2);
     $this->pdf->Multicelda($nPosEnc['col11']-$nPosEnc['col8'],$nInc/2, $this->utilerias->Personaliza_ID_MUESTRA($data[0]->ID_MUESTRA),0,'L',1,false);
     
     $this->pdf->ln($nInc/2);
@@ -392,7 +399,7 @@ class Impresiones_controller extends CI_Controller {
     $this->pdf->ln($nInc/2);
     $this->pdf->SetFont('Arial','',$nFontSize);
     $this->pdf->Multicelda($nPosEnc['col3']-$nPosEnc['col1'],$nInc/2,utf8_decode('Dirección:'),1,'R',1,false);
-    $this->pdf->SetFont('Arial','',8);
+    $this->pdf->SetFont('Arial','',$nFontSize);
     //Multicelda($ancho,$alto,$txt,$nBorde,$alig ,$nDesplaza ,$lFill =false ){
     	
     $this->pdf->Multicelda($nPosEnc['col7']-$nPosEnc['col3'],$nInc/2,$cDireCte,1,'L',1,false);    
@@ -455,7 +462,7 @@ class Impresiones_controller extends CI_Controller {
     $this->pdf->SetFont('Arial','',$nFontSize);
     $this->pdf->Multicelda($nPosEnc['col6']-$nPosEnc['col3'],$nInc/2,$cPesoVol,1,'L',1,false);
     $this->pdf->SetFont('Arial','',$nFontSize);
-    $this->pdf->Multicelda($nPosEnc['col9']-$nPosEnc['col6'],$nInc/2,'Id. Asignada por el Cliente:',1,'R',1,false);
+    $this->pdf->Multicelda($nPosEnc['col9']-$nPosEnc['col6'],$nInc/2,'ID. Asignada por el Cliente:',1,'R',1,false);
     $this->pdf->SetFont('Arial','',$nFontSize);
     $this->pdf->Multicelda($nPosEnc['col11']-$nPosEnc['col9'],$nInc/2,$IdAsigCliente,1,'L',1,false);        
     
@@ -492,7 +499,7 @@ class Impresiones_controller extends CI_Controller {
     $this->pdf->SetFont('Arial','',$nFontSize);
     $this->pdf->Multicelda($nPosEnc['col7']-$nPosEnc['col3'],$nInc/2,utf8_decode($cRespTomaMuestra),1,'L',1,false);
     $this->pdf->SetFont('Arial','',$nFontSize);
-    $this->pdf->Multicelda($nPosEnc['col9']-$nPosEnc['col7'],$nInc/2,utf8_decode('Fecha y hora:'),1,'R',1,false);
+    $this->pdf->Multicelda($nPosEnc['col9']-$nPosEnc['col7'],$nInc/2,utf8_decode('Fecha/hora:'),1,'R',1,false);
     $this->pdf->SetFont('Arial','',$nFontSize);
     $this->pdf->Multicelda($nPosEnc['col11']-$nPosEnc['col9'],$nInc/2,utf8_decode($dFechaHoraTomaMuestra),1,'L',1,false);
     //$this->pdf->ln($nInc/2);       		
@@ -826,7 +833,7 @@ class Impresiones_controller extends CI_Controller {
     
     $this->pdf->SetFont('Arial','',6); //normal
 
-    $this->pdf->cell($nPosEnc['col11']-$nPosEnc['col1'],$nInc/2,utf8_decode('(*) Metodo bajo el alcance de la acreditación.'),0,2,'L');
+    $this->pdf->cell($nPosEnc['col11']-$nPosEnc['col1'],$nInc/2,utf8_decode('(*) Metodo acreditado.'),0,2,'L');
     $this->pdf->cell($nPosEnc['col11']-$nPosEnc['col1'],$nInc/2,utf8_decode('El presente informe avala unicamente el resultado de la muestra analisada y recibida en el laboratorio.'),0,2,'L');
     $this->pdf->cell($nPosEnc['col11']-$nPosEnc['col1'],$nInc/2,utf8_decode('El presente informe no es válido si presenta raspaduras, tachaduras o enmendaduras.'),0,2,'L');
     $this->pdf->cell($nPosEnc['col11']-$nPosEnc['col1'],$nInc/2,utf8_decode('Prohibida la reproducción parcial o total de este informe sin la autorización del laboratorio.'),0,2,'L');
@@ -1240,9 +1247,9 @@ class Impresiones_controller extends CI_Controller {
 			$cLeyendaAcreditado = '(*) Acreditación No. A-0733-074/16. Vigente a partir del 2016-05-19.';
 		}
 		if ($data[$i]->RECONOCIDO_ESTUDIO == 'S'){
-			$cLeyendaReconocido = '(¹) Método reconocido por el SENASICA, de acuerdo a lo indicado en el Oficio No. B00.04.02.05 3817/2017.';
+			$cLeyendaReconocido = '(¹) Método reconocido por el SENASICA, de acuerdo a lo indicado en el Oficio Nº. B00.04.02.05 3817/2017.';
 			if ($data[$i]->AREA_ESTUDIO == 'M'){
-				$cLeyendaReconocido = '(²) Método reconocido por el SENASICA, de acuerdo a lo indicado en el Oficio No. B00.04.02.05 3818/2017.';
+				$cLeyendaReconocido = '(²) Método reconocido por el SENASICA, de acuerdo a lo indicado en el Oficio Nº. B00.04.02.05 3818/2017.';
 			}
 		}
               
@@ -2140,7 +2147,7 @@ class Impresiones_controller extends CI_Controller {
 	
     $this->pdf->cell($nPosEnc['col4']-$nPosEnc['col1'],$nInc/3,utf8_decode(strtoupper($cIniciales)),0,2,'L');
     if ($data[0]->ACREDITADO_ESTUDIO == 'N') {
-		$this->pdf->cell($nPosEnc['col4']-$nPosEnc['col1'],$nInc/3,utf8_decode('(*) Metodo bajo el alcance de la acreditación.'),0,2,'L');	
+		$this->pdf->cell($nPosEnc['col4']-$nPosEnc['col1'],$nInc/3,utf8_decode('(*) Metodo acreditado.'),0,2,'L');	
 	}else {
 		$this->pdf->cell($nPosEnc['col4']-$nPosEnc['col1'],$nInc/3,utf8_decode('(*) Metodo Acreditado.'),0,2,'L');
 	}    
@@ -2347,7 +2354,7 @@ class Impresiones_controller extends CI_Controller {
 	
     $this->pdf->cell($nPosEnc['col4']-$nPosEnc['col1'],$nInc/3,utf8_decode(strtoupper($cIniciales)),0,2,'L');
     if ($data[0]->ACREDITADO_ESTUDIO == 'N') {
-		$this->pdf->cell($nPosEnc['col4']-$nPosEnc['col1'],$nInc/3,utf8_decode('(*) Metodo bajo el alcance de la acreditación.'),0,2,'L');	
+		$this->pdf->cell($nPosEnc['col4']-$nPosEnc['col1'],$nInc/3,utf8_decode('(*) Metodo acreditado.'),0,2,'L');	
 	}else {
 		$this->pdf->cell($nPosEnc['col4']-$nPosEnc['col1'],$nInc/3,utf8_decode('(*) Metodo Acreditado.'),0,2,'L');
 	}    
@@ -2418,7 +2425,9 @@ class Impresiones_controller extends CI_Controller {
 	$cMetodoValidado	= $data[0]->ACREDITADO_ESTUDIO;
     // EMPEZAMOS EL PDF
     $this->load->library('pdf');
-    $this->pdf = new pdf( $cMetodoValidado ); //   
+    $this->pdf = new pdf( $cMetodoValidado ); //
+     
+    $this->pdf->SetLineWidth(.009); //2017-12-22
     
     $nInc =12;
     
@@ -2654,13 +2663,13 @@ class Impresiones_controller extends CI_Controller {
 	if ($data[0]->ACREDITADO_ESTUDIO == 'S'){
 		//$cLeyendaAcreditado = '(*) Acreditación No. A-0733-074/16. Vigente a partir del 2016-05-19.';
 		//2017-11-27
-		$cLeyendaAcreditado = '(*) Método bajo el alcance de la acreditación.';		
+		$cLeyendaAcreditado = '(*) Método acreditado.';		
 		$this->pdf->cell($nPosEnc['col4']-$nPosEnc['col1'],$nInc/3,utf8_decode($cLeyendaAcreditado),0,2,'L');	
 	}
 	if ($data[0]->RECONOCIDO_ESTUDIO == 'S'){
-		$cLeyendaReconocido = '(¹) Método reconocido por el SENASICA, de acuerdo a lo indicado en el Oficio No. B00.04.02.05 3817/2017.';
+		$cLeyendaReconocido = '(¹) Método reconocido por el SENASICA, de acuerdo a lo indicado en el Oficio Nº. B00.04.02.05 3817/2017.';
 		if ($data[0]->AREA_ESTUDIO == 'M'){
-			$cLeyendaReconocido = '(²) Método reconocido por el SENASICA, de acuerdo a lo indicado en el Oficio No. B00.04.02.05 3818/2017.';
+			$cLeyendaReconocido = '(²) Método reconocido por el SENASICA, de acuerdo a lo indicado en el Oficio Nº. B00.04.02.05 3818/2017.';
 		}
 		$this->pdf->cell($nPosEnc['col4']-$nPosEnc['col1'],$nInc/3,utf8_decode($cLeyendaReconocido),0,2,'L');	
 	}
