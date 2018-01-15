@@ -75,7 +75,7 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'culiacan.laria.mx',
+	'hostname' => 'localhost',
 	'username' => 'root',
 	'password' => 'efrainbeltran',
 	'database' => 'muestras',

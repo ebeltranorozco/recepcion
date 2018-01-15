@@ -8,6 +8,7 @@
 	<table class="table table-striped" id="idTablaCrudEstudiosGeneral">
 		<thead>
 			<tr>
+				<th>ID</th>
 				<th>Solicitud</th>
 				<th>Id Muestra</th>
 				<th>#</th>				
@@ -28,6 +29,7 @@
 			foreach ($query as $registro  ) {
 				echo '<tr>';
 					echo '<td>'.$registro->ID_RECEPCION_MUESTRA.'</td>';
+					echo '<td>'.$registro->FOLIO_SOLICITUD.'</td>';
 					$cAreaIdMuestra = substr($registro->ID_MUESTRA,2,1);
 					echo '<td>'.$registro->ID_MUESTRA.'</td>';
 					echo '<td>'.$registro->TOTAL_ENSAYOS_X_MUESTRA.'</td>';

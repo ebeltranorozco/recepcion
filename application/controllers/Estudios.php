@@ -472,6 +472,7 @@ class estudios extends CI_Controller {
 		$this->db->set('ID_MUESTRAS_AQ', 'ID_MUESTRAS_AQ + ID_MUESTRAS_TEMP_AQ',FALSE);
 		$this->db->set('ID_MUESTRAS_TEMP_AQ', '0',FALSE);
 		$this->db->set('ID_MUESTRAS_TEMP_MB', '0',FALSE);
+		//$this->db->set('FOLIO_SOLICITUD_RECEPCION', 'FOLIO_SOLICITUD_RECEPCION+1',FALSE); //2018-04-01 --> SE CAMBIO ESTRUCTURA EN LA BASE DE DATOS
 		$this->db->update('folios'); // gives UPDATE `mytable` SET `field` = 'field+1' WHERE `id` = 2
 		echo 'Actualizacion de los folios temporal termino en >0 = OK [' . $this->db->count_all_results();		
 	}
@@ -772,7 +773,10 @@ class estudios extends CI_Controller {
 					$data->accion = 'EDITAR';
 					$data->panel_title = 'Consulta Servicio de Laboratorio';
 				}else {
-					$nLastId = $this->estudios_model->getLastId('recepcion_muestras','id_recepcion_muestra')+1;
+					//$nLastId = $this->estudios_model->getLastId('recepcion_muestras','id_recepcion_muestra')+1;
+					$nLastId = $this->estudios_model->getFolioSolicitudRecepcion()+1; // anexado 2018-04-01
+					// 2018-04-01 --> obtencion del folio de la solicitud de la tabla folios
+										
 					// limpiar folios temporales de la tabla  16/05/2017
 					$cpoLimpiar = array('ID_MUESTRAS_TEMP_AQ'=>0,'ID_MUESTRAS_TEMP_MB'=>0);
 					$this->db->update('folios',$cpoLimpiar);
@@ -1066,7 +1070,7 @@ class estudios extends CI_Controller {
 		if ($enc && $det)	{				
 			$RespData = array();
 			
-			$datos_enc = array( 'ID_RECEPCION_MUESTRA' 		=> $enc['id_recepcion_muestra'],
+			$datos_enc = array( 'FOLIO_SOLICITUD' 		=> $enc['folio_solicitud'],
 							'ID_CLIENTE' 		=> $enc['id_cliente'],
 							'FECHA_RECEPCION' 	=> $enc['fecha_recepcion'],
 							'ID_USUARIO'		=> $_SESSION['user_id'],
@@ -1084,6 +1088,7 @@ class estudios extends CI_Controller {
 			//$cSql = $this->db->set($datos_enc)->get_compiled_insert('idr_enc_plaguicidas');			
 			$RespData['SQL_ENC'] = 'Cad tabla recepcion_muestras:['.$cSql."] ";
 			$query = $this->db->query( $cSql);
+			$nLast__Id = $this->db->insert_id();
 			$RespData['RESULTADO_ENC'] = $this->db->affected_rows();
 			
 			$RespData['SQL_ENC'] = $RespData['SQL_ENC'] .' SQL Folios:['.$this->db->last_query().")";
@@ -1118,7 +1123,7 @@ class estudios extends CI_Controller {
 					$cIdMetodo =substr($cIdMetodo, 0, strlen($cIdMetodo)-4) . str_pad($query->CONSECUTIVO,4,'0',STR_PAD_LEFT);
 				}
 				
-				$datos_detallado = array ('ID_RECEPCION_MUESTRA'	=> $enc['id_recepcion_muestra'],
+				$datos_detallado = array ('ID_RECEPCION_MUESTRA'	=> $nLast__Id, //2018-01-04
 								'ID_ESTUDIO'			=> $id,//_POST['id_estudio'],
 								'ID_MUESTRA'			=> $id_muestra,
 								'LOTE_MUESTRA'			=> $lote,
@@ -1150,13 +1155,16 @@ class estudios extends CI_Controller {
 			//2017-08-22 --> LIBERANDO LA APLICACION DE ESTE USUARIO PARA QUE OTROS LA PUEDA USAR.!
 			$this->db->query("update folios set REALIZANDO_SOLICITUD = ''");
 			
+			//2018-01-04 -->
+			$this->db->query("update folios set FOLIO_SOLICITUD_RECEPCION = FOLIO_SOLICITUD_RECEPCION+1");
+			
 			$RespData['MENSAJE_ERROR_BD'] = "";
 			if ($this->db->trans_status() === FALSE) {
 				$this->db->trans_rollback();
 				$RespData['SITUACION_REGISTRO'] = 'ERROR';
 				$RespData['MENSAJE_ERROR_BD'] = $this->db->_error_message();
 	        	
-	        } else {        
+	        } else {
 	        	$this->db->trans_commit();
 	        	$RespData['SITUACION_REGISTRO'] = 'EXITO';
 	        }		

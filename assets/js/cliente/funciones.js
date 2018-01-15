@@ -1485,7 +1485,8 @@ $(function () {
 		// es para grabar en la base de da tos los estudios		
 		var fecha_recepcion = $("#fecha_solicitud").val();
 		var id_cliente = $("#id_cliente").val();
-		var id_recepcion_muestra = $("#folio_solicitud").val();
+		//var id_recepcion_muestra = $("#folio_solicitud").val(); -->se elimino el 04012018
+		var folio_solicitud =  $("#folio_solicitud").val();
 		var observaciones_recepcion = $("#obs_recepcion").val(); // mar 2017
 		var toma_muestra = $("#toma_muestra").val();//25/05/2017
 		var fecha_toma_muestra = $("#fecha_toma_muestra").val() // 2017-11-27
@@ -1514,7 +1515,7 @@ $(function () {
 			genera_idr = 0; //false
 		}
 		
-		console.log(" Folio Recepcion:" + id_recepcion_muestra);
+		console.log(" Folio Recepcion:" + folio_solicitud);
 		//validando la informacion de manera light		
 		
 		
@@ -1528,7 +1529,7 @@ $(function () {
 
 
 		
-				var data = { enc:{'id_recepcion_muestra':id_recepcion_muestra, 'id_cliente': id_cliente, 'fecha_recepcion': fecha_recepcion, 'observaciones_recepcion':observaciones_recepcion,'toma_muestra':toma_muestra,'otros_servicio':otros_servicio,"destino_muestra":destino_muestra,"condiciones_muestra":condiciones_muestra,'generar_idr_muestra':genera_idr,'fecha_toma_muestra':fecha_toma_muestra},det:[]}
+				var data = { enc:{'folio_solicitud':folio_solicitud, 'id_cliente': id_cliente, 'fecha_recepcion': fecha_recepcion, 'observaciones_recepcion':observaciones_recepcion,'toma_muestra':toma_muestra,'otros_servicio':otros_servicio,"destino_muestra":destino_muestra,"condiciones_muestra":condiciones_muestra,'generar_idr_muestra':genera_idr,'fecha_toma_muestra':fecha_toma_muestra},det:[]}
 				var detallado = new Array();
 				//recorrer las filas de las tablas y ponerlas en un array	
 				
@@ -1556,7 +1557,7 @@ $(function () {
 				// de las instrucciones importantes ..!
 				data.det.push(detallado); 				
 				
-				console.log('Grabando el folio de Solicitud [' + id_recepcion_muestra +']');
+				console.log('Grabando el folio de Solicitud [' + folio_solicitud +']');
 				$.ajax({			
 					data: data,
 					method: 'POST',
