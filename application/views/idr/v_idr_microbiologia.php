@@ -26,6 +26,7 @@ $cIdTabla = array('id'=>'idTabla','class'=>'form_control','value'=>set_value('id
 //2017-08-17 --> para indicafr cuando un ensayo es para prueba preliminar
 $lGeneraFolioIDR = array( 'name'=>'idGeneraFolioIDR','id'=>'idGeneraFolioIDR','class'=>'form-control' ,'checked'=>false,'value' => set_value('idGeneraFolioIDR'),'style'=>'margin:2px 0 0;border-color:none;box-shadow:none;','disabled'=>'disabled');
 
+//var_dump($datos_metodologia);
 
 if ($accion =="ALTA") {
 	$cIdMuestra['value'] = $idMuestra;
@@ -39,7 +40,9 @@ if ($accion =="ALTA") {
 	$cReferencia['value'] = utf8_encode($cTmp);
 	$cObsResultado['value'] = 'Ninguna';
 	// hay q heredarlo..!
-	$cCondMuestra['value'] = utf8_decode($datos_metodologia->CONDICIONES_MUESTRA);	
+	$cTmp = utf8_encode($datos_metodologia->CONDICIONES_MUESTRA);
+	$cCondMuestra['value'] = utf8_decode($cTmp);	
+	//$cCondMuestra['value'] = $datos_metodologia->CONDICIONES_MUESTRA;	
 	$cIDR['value'] = $folios->IDR_MB+1;
 	
 	//$cInicialesAnalista['value'] = '';
@@ -96,6 +99,9 @@ if (!$datos_metodologia->GENERAR_IDR_MUESTRA) {
 	$lGeneraFolioIDR['checked'] = TRUE;
 }
 
+
+
+/*
 var_dump( $resultados );
 echo '<br/>Cadena SQL:';
 var_dump( $sql);
@@ -103,6 +109,7 @@ echo '<br/> Folio IDR AQ array:';
 var_dump($folios);
 //var_dump($folios);
 echo '<br/> Folio IDR MB array::';
+*/
 //echo $folios->IDR_MB;
 //echo '<br/>SQL para condiciones muestra:[';
 //var_dump($sql2);

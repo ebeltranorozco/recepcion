@@ -45,7 +45,7 @@ class Impresiones_controller extends CI_Controller {
     
     $cTipoAnalisis      = $data[0]->AREA_ESTUDIO;
     //$cOrigen
-    $dFechaAnalisis     = $data[0]->FECHA_MICROBIOLOGIA; // FECHA FINAL
+    $dFechaAnalisis     = $data[0]->FECHA_FINAL_MICROBIOLOGIA; // FECHA FINAL  2018-01-16
     
     $cAnalisis			= $data[0]->ANALISIS_SOLICITADO_MICROBIOLOGIA;
     $cResultado			= $data[0]->RESULTADO_MICROBIOLOGIA; 
@@ -84,7 +84,7 @@ class Impresiones_controller extends CI_Controller {
     // COMENZAMOS EL REPORTE    
     
     //GENERAMOS EL ENCABEZADO GENERAL!
-    $this->idr_encabezado($data,$dFechaAnalisis);  
+    $this->idr_encabezado($data,NULL,$dFechaAnalisis);  // fecha inicial no aplica para micro
     
     // DATOS DEL RESULTADO
     $this->pdf->ln($nInc/2);
@@ -102,22 +102,20 @@ class Impresiones_controller extends CI_Controller {
     $this->pdf->Multicelda($nPosEnc['col4']-$nPosEnc['col3'],$nInc,utf8_decode('METODO DE PRUEBA'),1,'C',1,false);
 
 	$this->pdf->ln();  
+    $nRowActual = $this->pdf->gety();
 
     // COMENZANDO A ESCRIBIR LOS DATOS..!
     $cTmp = utf8_decode($data[0]->ANALISIS_SOLICITADO_MICROBIOLOGIA);
     $this->pdf->SetFont('Arial','',8);
     //$this->pdf->Multicelda2($nPosEnc['col2']-$nPosEnc['col1'],$nInc*2,($cTmp),1,'C',1,false);
     $this->pdf->cellHtml($nPosEnc['col2']-$nPosEnc['col1'],$nInc*2,$cTmp,1,'C' ,1 );
-    //$html = utf8_decode('Ahora puede imprimir fácilmente <p>texto mezclando <br> diferentes <br> estilos: <b>negrita</b>, <i>itálica</i>,<u>subrayado</u>, o ¡ <b><i><u>todos a la vez</u></i></b>!<br><br>También puede incluir enlaces en el texto, como <a href="http://www.fpdf.org">www.fpdf.org</a>, o en una imagen: pulse en el logotipo.');
-    //$cHtml = utf8_decode($data[0]->ANALISIS_SOLICITADO_MICROBIOLOGIA);
-    //$this->pdf->WriteHTML(utf8_encode($html));
-    //$this->pdf->WriteHTML(($cTmp));
     
-    $this->pdf->setx($nPosEnc['col2']);
+    
+    $this->pdf->setXY($nPosEnc['col2'],$nRowActual);
 	$this->pdf->Multicelda($nPosEnc['col3']-$nPosEnc['col2'],$nInc*2,utf8_decode($cResultado),1,'C',1,false);
 	
 	
-	$this->pdf->setx($nPosEnc['col3']);	
+	$this->pdf->setxy($nPosEnc['col3'],$nRowActual);	
 	$this->pdf->Multicelda2($nPosEnc['col4']-$nPosEnc['col3'],$nInc*2,utf8_decode($cMetodoPrueba),1,'L',1,false);
 	
 	//$this->pdf->WriteHTML( ($cMetodoPrueba));
@@ -434,7 +432,7 @@ class Impresiones_controller extends CI_Controller {
     
     
     $cOrigenMuestra		= utf8_decode($data[0]->LOTE_MUESTRA);  
-    $IdAsigCliente      = $data[0]->ID_ASIGNADO_CLIENTE;
+    $IdAsigCliente      = utf8_decode($data[0]->ID_ASIGNADO_CLIENTE);
     $nCant              = $data[0]->NO_MUESTRAS;
     $cTemperatura		= utf8_decode($data[0]->TEMPERATURA_MUESTRA);
     $cUbicacion         = 'NA';

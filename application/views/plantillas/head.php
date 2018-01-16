@@ -21,7 +21,8 @@ ini_set("session.gc_maxlifetime","7200");//2017-07-11
 	 <script src="<?php echo base_url('assets/jquery/jquery-3.1.0.min.js')?>"></script>  
 	 -->	 
 	 
-	 <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+	 <!--<script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>-->
+   <script src="<?php echo base_url('assets/jquery/jquery-2.2.4.min.js');?>" crossorigin="anonymous"></script>
 	 
 	 
 	 
