@@ -377,16 +377,16 @@ class idr extends CI_Controller {
 			
 			$this->load->view('plantillas/head', $data);
 			$this->load->view('plantillas/header', $data);
-			$this->load->view('idr/v_idr_microbiologia', $data);
+			//$this->load->view('idr/v_idr_microbiologia', $data); // susependid 17/01/18
+			$this->load->view('idr/v_idr_microbiologia2', $data); // anexado 2
+
 			$this->load->view('plantillas/footer', $data);			
 		} // fin de !is_null( idmetodologia)		
 	} // fin de idr_microbiologicos	
 /****************FIN DEL IDR DE MICROBIOLOGICOS***********************************/	
 	public function graba_o_corrige_idr_microbiologia(){ // is ajax es para que grabe el idr de microbiologia graba_idr_microbiologia y ademas ahora actualiza  2017-08-21
 		$lRet = false;		
-		//var datos={'idIDR':idIDR, 'id_muestra':idMuestra, 'id_metodologia': idMetodologia, 'analisis_solicitado_microbiologia':analisis,'metodo_prueba_microbiologia':metodo,'referencia_microbiologia':referencia,'observacion_microbiologia':obs,'condiciones_microbiologia':condiciones,'resultado_microbiologia':resultado,'fecha_microbiologia':idFechaFinal,'iniciales_analista_microbiologia':iniciales_analista,'id_usuario_signatario':idUserSignatario  };	
 		//var datos={'idIDR':idIDR, 'id_muestra':idMuestra, 'id_metodologia': idMetodologia, 'analisis_solicitado_microbiologia':analisis,'metodo_prueba_microbiologia':metodo,'referencia_microbiologia':referencia,'observacion_microbiologia':obs,'condiciones_microbiologia':condiciones,'resultado_microbiologia':resultado,'fecha_microbiologia':idFechaFinal,'iniciales_analista_microbiologia':iniciales_analista,'id_usuario_signatario':idUserSignatario,'accion':accion,'causas_correccion':causas  };
-		
 		if (isset($_POST['id_metodologia'])){
 			$RespData = array();
 			$idIDR =$_POST['idIDR'];
@@ -413,7 +413,10 @@ class idr extends CI_Controller {
 							'FECHA_FINAL_MICROBIOLOGIA' 				=> $_POST['fecha_microbiologia'],
 							'CARGO_TECNICO_MICROBIOLOGIA' 		=> $query->CARGO_USUARIO,
 							'INICIALES_ANALISTA_MICROBIOLOGIA' 	=> $_POST['iniciales_analista_microbiologia'],
-							'ID_USUARIO_CAPTURISTA'				=> $_SESSION['user_id']);
+							'ID_USUARIO_CAPTURISTA'				=> $_SESSION['user_id'],
+							'RESULTADO_COLIFORMES_TOTALES_MICROBIOLOGIA'=> $_POST['coliformes_totales_resultado'],
+							'RESULTADO_COLIFORMES_FECALES_MICROBIOLOGIA'=> $_POST['coliformes_fecales_resultado'],
+							'RESULTADO_ECOLI_MICROBIOLOGIA'				=> $_POST['ecoli_resultado']);
 			
 			$this->db->trans_begin(); //COMENZAMOS LAS TRANSACCIONES
 			

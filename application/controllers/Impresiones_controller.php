@@ -49,6 +49,11 @@ class Impresiones_controller extends CI_Controller {
     
     $cAnalisis			= $data[0]->ANALISIS_SOLICITADO_MICROBIOLOGIA;
     $cResultado			= $data[0]->RESULTADO_MICROBIOLOGIA; 
+    //2018-01-17
+    $cResultadoColTotal = $data[0]->RESULTADO_COLIFORMES_TOTALES_MICROBIOLOGIA;
+    $cResultadoColFecal = $data[0]->RESULTADO_COLIFORMES_FECALES_MICROBIOLOGIA;
+    $cResultadoEColi    = $data[0]->RESULTADO_ECOLI_MICROBIOLOGIA;
+
     $cMetodoPrueba		= $data[0]->METODO_PRUEBA_MICROBIOLOGIA; 
     
     
@@ -94,7 +99,7 @@ class Impresiones_controller extends CI_Controller {
     $this->pdf->SetFont('Arial','B',8);
     
     //$nPosEnc = array('col1' => 10,'col2'=>35,'col3'=>70,'col4' =>90,'col5' => 105,'col6'=>130,'col7'=>145,'col8' =>160,'col9'=>206);
-    $nPosEnc = array('col1' => 10,'col2'=>70,'col3'=>130,'col4' =>206);
+    $nPosEnc = array('col1' => 10,'col2'=>70,'col2.5'=>100,'col3'=>140,'col4' =>206);
        
     
     $this->pdf->Multicelda($nPosEnc['col2']-$nPosEnc['col1'],$nInc,utf8_decode('ANALISIS SOLICITADO'),1,'C',1,false);
@@ -105,25 +110,52 @@ class Impresiones_controller extends CI_Controller {
     $nRowActual = $this->pdf->gety();
 
     // COMENZANDO A ESCRIBIR LOS DATOS..!
-    $cTmp = utf8_decode($data[0]->ANALISIS_SOLICITADO_MICROBIOLOGIA);
     $this->pdf->SetFont('Arial','',8);
-    //$this->pdf->Multicelda2($nPosEnc['col2']-$nPosEnc['col1'],$nInc*2,($cTmp),1,'C',1,false);
-    $this->pdf->cellHtml($nPosEnc['col2']-$nPosEnc['col1'],$nInc*2,$cTmp,1,'C' ,1 );
-    
-    
+
+    //2018-01-17 --> anexando primero la columan de resultados por si hubera varias variantes col totales/fecales o un resultado general
+
     $this->pdf->setXY($nPosEnc['col2'],$nRowActual);
-	$this->pdf->Multicelda($nPosEnc['col3']-$nPosEnc['col2'],$nInc*2,utf8_decode($cResultado),1,'C',1,false);
+    $nRowTmp =  $nRowActual;
+    if ($cResultado) {
+        $this->pdf->Multicelda($nPosEnc['col3']-$nPosEnc['col2'],$nInc*2,utf8_decode($cResultado),0,'C',2,false);
+        //$this->pdf->ln();
+        $nRowTmp = $this->pdf->getY();
+    }
+    if ($cResultadoColTotal ){
+        $this->pdf->setX($nPosEnc['col2']);
+        //$this->pdf->Multicelda($nPosEnc['col2.5']-$nPosEnc['col2'],$nInc,utf8_decode('Coliformes Totales:'),0,'L',2,false);
+        $this->pdf->cell($nPosEnc['col2.5']-$nPosEnc['col2'],$nInc/2,utf8_decode('Coliformes Totales:'),0,2,'L',false);
+        $this->pdf->setX($nPosEnc['col2']+5);
+        $this->pdf->Multicelda($nPosEnc['col3']-$nPosEnc['col2']-5,$nInc,utf8_decode($cResultadoColTotal),0,'L',2,false);
+        $nRowTmp = $this->pdf->getY();
+    }
+    if ($cResultadoColFecal ){
+        $this->pdf->setX($nPosEnc['col2']);
+        //$this->pdf->Multicelda($nPosEnc['col2.5']-$nPosEnc['col2'],$nInc,utf8_decode('Coliformes Fecales:'),0,'L',2,false);
+        $this->pdf->cell($nPosEnc['col2.5']-$nPosEnc['col2'],$nInc/2,utf8_decode('Coliformes Fecales:'),0,2,'L',false);
+        $this->pdf->setX($nPosEnc['col2']+5);
+        $this->pdf->Multicelda($nPosEnc['col3']-$nPosEnc['col2']-5,$nInc,utf8_decode($cResultadoColFecal),0,'L',2,false);
+        $nRowTmp = $this->pdf->getY();
+    }
+    if ($cResultadoEColi ){
+        $this->pdf->setX($nPosEnc['col2']);
+        //$this->pdf->Multicelda($nPosEnc['col2.5']-$nPosEnc['col2'],$nInc,utf8_decode('E. Coli:'),0,'L',2,false);
+        $this->pdf->SetFont('Arial','I',8);
+        $this->pdf->cell($nPosEnc['col2.5']-$nPosEnc['col2'],$nInc/2,'E. Coli:',0,2,'L',false);
+        $this->pdf->SetFont('Arial','',8);
+        $this->pdf->setX($nPosEnc['col2']+5);
+        $this->pdf->Multicelda($nPosEnc['col3']-$nPosEnc['col2']-5,$nInc,utf8_decode($cResultadoEColi),0,'L',2,false);
+        $nRowTmp = $this->pdf->getY();
+    }
+
+    $cTmp = utf8_decode($data[0]->ANALISIS_SOLICITADO_MICROBIOLOGIA);
+    $this->pdf->setxy($nPosEnc['col1'],$nRowActual);    
+    $this->pdf->cellHtml($nPosEnc['col2']-$nPosEnc['col1'],$nRowTmp-$nRowActual,$cTmp,1,'C' ,1 );   
 	
 	
 	$this->pdf->setxy($nPosEnc['col3'],$nRowActual);	
-	$this->pdf->Multicelda2($nPosEnc['col4']-$nPosEnc['col3'],$nInc*2,utf8_decode($cMetodoPrueba),1,'L',1,false);
+	$this->pdf->Multicelda2($nPosEnc['col4']-$nPosEnc['col3'],$nRowTmp-$nRowActual,utf8_decode($cMetodoPrueba),1,'L',1,false);
 	
-	//$this->pdf->WriteHTML( ($cMetodoPrueba));
-	//$this->pdf->ln();	
-      
-      
-    //REFERENCIAS DE APLICACION DE LA METODOLOGIA
-    //$this->pdf->ln($nInc/2);
     $nRowActual = $this->pdf->gety();
     $this->pdf->setxy( $nPosEnc['col1'], $nRowActual);
     

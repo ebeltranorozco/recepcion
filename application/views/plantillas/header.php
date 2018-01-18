@@ -54,39 +54,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
              
               <?php if ($_SESSION['user_tipo']=='A') { ?>
                 <li><a href="<?php echo base_url('permisos_usuario'); ?>">Permisos</a></li>
-              <?php } ?>
+              <?php } ?>     
               
               
-              
-              
-              <!-- <span class="caret"></span> -->
-              <!--
-              <li class="dropdown-submenu">
-			    <a tabindex="-1" href="#">More options</a>
-			    <ul class="dropdown-menu">			      
-			      <li><a tabindex="-1" href="#">Second link</a></li>
-			      <li><a tabindex="-1" href="#">Second link</a></li>
-			      <li><a tabindex="-1" href="#">Second link</a></li>
-			    </ul>
-			  </li>
-			  
-			  <li class="dropdown-submenu">
-		        <a class="test" tabindex="-1" href="#">New dropdown <span class="caret"></span></a>
-		        <ul class="dropdown-menu">
-		          <li><a tabindex="-1" href="#">2nd level dropdown</a></li>
-		          <li><a tabindex="-1" href="#">2nd level dropdown</a></li>
-		          <li class="dropdown-submenu">
-		            <a class="test" href="#">Another dropdown <span class="caret"></span></a>
-		            <ul class="dropdown-menu">
-		              <li><a href="#">3rd level dropdown</a></li>
-		              <li><a href="#">3rd level dropdown</a></li>
-		            </ul>
-		          </li>
-		        </ul>
-		      </li>
-		      
-		      -->
-		      
 		      
 
             </ul>

@@ -1997,7 +1997,13 @@ $(function () {
 		var obs			= $("#idObsResultado").val();
 		var condiciones	= $("#idCondMuestra").val();
 		var analisis 	= $("#idAnalisisSolicitado").val();
-		var resultado 	= $("#idResultado_microbiologia").val();
+		var resultado 	= $("#idResultado_microbiologia").val();		
+		// 2018-01-17 --> 3 campos anexado el cpo de arriba ya no se usara
+		var coltotales_resultado	= $("#idResultado_coltotales_microbiologia").val();
+		var colfecales_resultado	= $("#idResultado_colfecales_microbiologia").val();
+		var ecoli_resultado			= $("#idResultado_ecoli_microbiologia").val();
+
+		
 		var metodo 		= $("#idMetodoPrueba").val();
 		var iniciales 	= $("#idInicialesAnalista").val();
 		
@@ -2029,13 +2035,17 @@ $(function () {
 			alert('Seleccionar usuario Signatario');
 		}else if (accion == 'EDICION'  && !causas) {
 			alert('Debe Indicar las Causas de porque se hizo la corrección...!');			
-		} else if (!resultado){
+			/*var coltotales_resultado	= $("#idResultado_coltotales_microbiologia").val();
+		var colfecales_resultado	= $("#idResultado_colfecales_microbiologia").val();
+		var ecoli_resultado			= $("#idResultado_ecoli_microbiologia").val();
+*/
+		} else if (!resultado && ( !coltotales_resultado && !colfecales_resultado && !ecoli_resultado) ){
 			alert('Informacion incompleta en el Resultado..;')	
 		}else {
 			
 			if (confirm('Proceder con el Grabado del IDR de Microbiologia')) {
 				// EMPIEZA LO BUENO AJUA..!				
-				var datos={'idIDR':idIDR, 'id_muestra':idMuestra, 'id_metodologia': idMetodologia, 'analisis_solicitado_microbiologia':analisis,'metodo_prueba_microbiologia':metodo,'referencia_microbiologia':referencia,'observacion_microbiologia':obs,'condiciones_microbiologia':condiciones,'resultado_microbiologia':resultado,'fecha_microbiologia':idFechaFinal,'iniciales_analista_microbiologia':iniciales_analista,'id_usuario_signatario':idUserSignatario,'accion':accion,'causas_correccion':causas };
+				var datos={'idIDR':idIDR, 'id_muestra':idMuestra, 'id_metodologia': idMetodologia, 'analisis_solicitado_microbiologia':analisis,'metodo_prueba_microbiologia':metodo,'referencia_microbiologia':referencia,'observacion_microbiologia':obs,'condiciones_microbiologia':condiciones,'resultado_microbiologia':resultado,'fecha_microbiologia':idFechaFinal,'iniciales_analista_microbiologia':iniciales_analista,'id_usuario_signatario':idUserSignatario,'accion':accion,'causas_correccion':causas,'coliformes_totales_resultado': coltotales_resultado,'coliformes_fecales_resultado':colfecales_resultado,'ecoli_resultado': ecoli_resultado };
 				console.log('mandando grabar el idr Microbiologia General');
 				console.log(datos);
 				
