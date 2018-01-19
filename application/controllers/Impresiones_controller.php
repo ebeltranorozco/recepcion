@@ -2580,10 +2580,12 @@ class Impresiones_controller extends CI_Controller {
 	//2017-08-16  --> se va a meter una varioable para la leyenda de los Asteriscos (analitos y metales)
 	
     //$this->pdf->ln($nInc);
+    $cFirmaSignatario   = $data[0]->RUTA_FOTO_USUARIO;
     if ($cNameIDR == 'PLAGUICIDAS') {
 		$cNombreSignatario	= $data[0]->NOMBRE_USUARIO;
     	$cCargoSignatario	= $data[0]->CARGO_USUARIO;
-    	$cIniciales			 = $data[0]->INICIALES_ANALISTA_PLAGUICIDAS;	
+    	$cIniciales			= $data[0]->INICIALES_ANALISTA_PLAGUICIDAS;
+        
     	
     	$cRefResultado       = $data[0]->REFERENCIA_PLAGUICIDAS;
     	$cObsResultado       = $data[0]->OBSERVACION_PLAGUICIDAS;
@@ -2625,6 +2627,8 @@ class Impresiones_controller extends CI_Controller {
     	$cObsResultado       = $data[0]->OBSERVACION_METALES;
     	$cCondMuestra        = $data[0]->CONDICIONES_METALES;    	
     } // fin del if   // fin del if        
+
+    //$cFotoSignatario    = $_SESSION['ruta_firma_usuario'] ;
         
     // REFERENCIAS DE APKLICACION Y OBSERVCIONES
     
@@ -2671,12 +2675,29 @@ class Impresiones_controller extends CI_Controller {
        
 	//$this->pdf->Multicelda($nPosEnc['col8']-$nPosEnc['col1'],$nInc*5,utf8_decode($cMetodoPrueba),1,'C',2,false);	
     // FIRMA DEL TECNICO
+    $nRowFoto = $this->pdf->getY();
     $this->pdf->ln($nInc);
+    
     
     $this->pdf->cell($nPosEnc['col8']-$nPosEnc['col1'],$nInc/2,'___________________________________________________',0,2,'C');
     $this->pdf->cell($nPosEnc['col8']-$nPosEnc['col1'],$nInc/2,utf8_decode($cNombreSignatario),0,2,'C');
     $this->pdf->cell($nPosEnc['col8']-$nPosEnc['col1'],$nInc/2,utf8_decode($cCargoSignatario),0,2,'C');
     //$this->pdf->ln($nInc/2);
+    // ANEXAR LA IMAGEN...!
+    
+    //Image(string file [, float x [, float y [, float w [, float h [, string type [, mixed link]]]]]])
+    //$this->pdf->imagen ( $cFotoSignatario,100,$nRowFoto,150,100,'PNG');
+    //$this->pdf->imagen ( 'https://aristeguinoticias.com/wp-content/uploads/2016/01/unnamed.png',10,$nRowFoto);
+    if ($cFirmaSignatario ) {
+        $this->pdf->Image($cFirmaSignatario,90,$nRowFoto,37);    
+    }
+
+    if (file_exists('assets/img/sello/sello_laria.png')) {
+        $this->pdf->image( 'assets/img/sello/sello_laria.png',160, $nRowFoto,40);    
+    }
+    
+
+    
 
     // DEMAS COSAS
     

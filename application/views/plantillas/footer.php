@@ -28,5 +28,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   		<!--<script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"></script>-->
     
     <script src="<?php echo base_url(); ?>assets/js/cliente/funciones.js" type="text/javascript"></script><!--cargando las funciones -->
+    
   </body>
 </html>

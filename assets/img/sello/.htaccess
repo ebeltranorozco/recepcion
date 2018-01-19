@@ -1,0 +1,3 @@
+# Para bloquear el listado añadir una de estas dos líneas
+Options -Indexes
+IndexIgnore * 

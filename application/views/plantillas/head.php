@@ -4,6 +4,7 @@ date_default_timezone_set ( 'America/Mazatlan' );
 ini_set('date.timezone','America/Mazatlan'); 
 ini_set("session.cookie_lifetime","7200");//2017-07-11
 ini_set("session.gc_maxlifetime","7200");//2017-07-11
+//echo 'ruta'. $_SESSION['ruta_firma_usuario'];
 ?>
 <!DOCTYPE html>
 <html lang="es">
