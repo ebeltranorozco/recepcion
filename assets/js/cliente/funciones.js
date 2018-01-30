@@ -1997,12 +1997,11 @@ $(function () {
 		var obs			= $("#idObsResultado").val();
 		var condiciones	= $("#idCondMuestra").val();
 		var analisis 	= $("#idAnalisisSolicitado").val();
-		var resultado 	= $("#idResultado_microbiologia").val();		
+		var resultado 	= $("#idResultado_microbiologia").val();
 		// 2018-01-17 --> 3 campos anexado el cpo de arriba ya no se usara
 		var coltotales_resultado	= $("#idResultado_coltotales_microbiologia").val();
 		var colfecales_resultado	= $("#idResultado_colfecales_microbiologia").val();
 		var ecoli_resultado			= $("#idResultado_ecoli_microbiologia").val();
-
 		
 		var metodo 		= $("#idMetodoPrueba").val();
 		var iniciales 	= $("#idInicialesAnalista").val();
@@ -2035,16 +2034,13 @@ $(function () {
 			alert('Seleccionar usuario Signatario');
 		}else if (accion == 'EDICION'  && !causas) {
 			alert('Debe Indicar las Causas de porque se hizo la corrección...!');			
-			/*var coltotales_resultado	= $("#idResultado_coltotales_microbiologia").val();
-		var colfecales_resultado	= $("#idResultado_colfecales_microbiologia").val();
-		var ecoli_resultado			= $("#idResultado_ecoli_microbiologia").val();
-*/
 		} else if (!resultado && ( !coltotales_resultado && !colfecales_resultado && !ecoli_resultado) ){
 			alert('Informacion incompleta en el Resultado..;')	
 		}else {
 			
 			if (confirm('Proceder con el Grabado del IDR de Microbiologia')) {
 				// EMPIEZA LO BUENO AJUA..!				
+				//var datos={'idIDR':idIDR, 'id_muestra':idMuestra, 'id_metodologia': idMetodologia, 'analisis_solicitado_microbiologia':analisis,'metodo_prueba_microbiologia':metodo,'referencia_microbiologia':referencia,'observacion_microbiologia':obs,'condiciones_microbiologia':condiciones,'resultado_microbiologia':resultado,'fecha_microbiologia':idFechaFinal,'iniciales_analista_microbiologia':iniciales_analista,'id_usuario_signatario':idUserSignatario,'accion':accion,'causas_correccion':causas };
 				var datos={'idIDR':idIDR, 'id_muestra':idMuestra, 'id_metodologia': idMetodologia, 'analisis_solicitado_microbiologia':analisis,'metodo_prueba_microbiologia':metodo,'referencia_microbiologia':referencia,'observacion_microbiologia':obs,'condiciones_microbiologia':condiciones,'resultado_microbiologia':resultado,'fecha_microbiologia':idFechaFinal,'iniciales_analista_microbiologia':iniciales_analista,'id_usuario_signatario':idUserSignatario,'accion':accion,'causas_correccion':causas,'coliformes_totales_resultado': coltotales_resultado,'coliformes_fecales_resultado':colfecales_resultado,'ecoli_resultado': ecoli_resultado };
 				console.log('mandando grabar el idr Microbiologia General');
 				console.log(datos);
@@ -2804,5 +2800,109 @@ $(function () {
 		}); // fin del ajax	
 	}) // fin de BtnAgregaAnalitosxMetodoGC
 	/**************************************************************************************************/
+	$(".GrabaIDRPlaguicidasAgua").click(function(){ //2018-01-30 --> plagucidas en agua
+		
+		var idMuestra 		= $("#idMuestra").val();
+		var idMetodologia 	= $("#idMetodologia").val();
+		var accion 			= $(this).val(); // toma el value del boton que llamo a este procedimiento // ALTA o EDICION
+			
+		
+		//var iniciales 	= $("#idInicialesAnalista").val();
+		var fechafinal	= $("#idFechaFinal").val();		
+		
+		var referencia	= $("#idReferencia").val();
+		var obs			= $("#idObsResultado").val();
+		var condiciones	= $("#idCondMuestra").val();
+		var analisis 	= $("#idAnalisisSolicitado").val();
+		var metodo 		= $("#idMetodoPrueba").val();
+		
+		//2017-07-10
+		//obteniendo el nombre y cargo de quien este como signataria seleccionada del combo que les puse nuevo
+		var idUserSignatario = $("#idSignatarioCombo option:selected").prop('value');
+		
+		
+		var idIDR 			= 0;
+		if ($("#idGeneraFolioIDR").is(':checked')) {  // cambio 2017-08-17
+            console.log('No debe de Generar IDR (osea no actualizar cpo IDR en afaltoxinas');       
+        } else 	{
+			idIDR = $("#idIDR").val();
+			console.log('Generar IDR (flujo normal del programa');       
+		}
+		
+		//2017-08-17 --> saber la fecha de terminacion del informe.
+		var idFechaFinal = $("#idFechaFinal").val() ; // fecha de terminacion caturada por el user
+		var iniciales_analista = $("#idInicialesAnalista").val(); // nuevo campo agregado para agregar todo..!
+		
+		//2017-07-20
+		var idUserSignatario = $("#idSignatarioCombo option:selected").prop('value');
+		
+		//2017-08-28
+		var causas			= $("#idCausasCorreccion").val(); // posible causas de porque se corrige
+		var idTabla			= $('#idTabla').val(); // represente el id autonumerico de cada tabla idr
+		
+		
+		$nFilas = $("#idTablaIDRPlaguicidas >tbody >tr").length;
+		
+		// pasos previos a la validacion..!		
+		if (!idUserSignatario){
+			alert('Seleccionar usuario Signatario');
+		}else if (accion == 'EDICION'  && !causas) {
+			alert('Debe Indicar las Causas de porque se hizo la corrección ...!');			
+		} else if ( $nFilas == 0 ){
+			alert('Informacion incompleta en el Resultado (Debe Especificar Analitos al IDR)');
+		}else {
+			
+			if (confirm('Proceder con el Grabado del IDR de Microbiologia')) {
+				// EMPIEZA LO BUENO AJUA..!
+				//recorrer las filas de las tablas y ponerlas en un array				
+				//var datos={'idIDR':idIDR, 'id_muestra':idMuestra, 'id_metodologia': idMetodologia, 'analisis_solicitado_mercurio':analisis,'metodo_prueba_mercurio':metodo,'referencia_mercurio':referencia,'observacion_mercurio':obs,'condiciones_mercurio':condiciones,'resultado_mercurio':resultado,'fecha_final_mercurio':idFechaFinal,'iniciales_analista_mercurio':iniciales_analista,'lc_mercurio':lc, 'lmp_mercurio':lmp,'tecnica_mercurio':tecnica,'id_usuario_signatario':idUserSignatario,'accion':accion,'causas_correccion':causas };
+				  var data = { enc:{'id_idr':idIDR,'id_muestra':idMuestra,'id_metodologia': idMetodologia,'referencia_plaguicidas':referencia,'observacion_plaguicidas':obs,'condiciones_plaguicidas':condiciones, 'analisis_solicitado_plaguicidas':analisis,'metodo_prueba_plaguicidas':metodo,'fecha_final_plaguicidas':fechafinal,'iniciales_analista_plaguicidas':iniciales_analista,'id_usuario_signatario':idUserSignatario,'accion':accion,'causas_correccion':causas},det:[]}
+				
+				var detallado = new Array();
+				var nPos = 0;
+				$('#idTablaIDRPlaguicidas tr').each(function () {
+
+					var analito = $(this).find("td").eq(0).html();
+					var resultado = $(this).find("td").eq(1).html();
+					var lc = $(this).find("td").eq(2).html();
+					var lmp = $(this).find("td").eq(3).html();
+					var tecnica = $(this).find("td").eq(4).html();
+					if (analito) {
+						detallado.push( analito,resultado,lc,lmp,tecnica);	
+					}			
+
+				});
+				console.log( detallado);
+				data.det.push(detallado);		
+				
+				console.log(data);
+				//alert('Entrando al ajax para grabar el idr de plagicidas');
+				console.log('Entrando al ajax para grabar el idr de plagicidas');
+				//dataType: "json",
+				$.ajax({			
+					data: data,
+					method: 'POST',
+					url: baseUrlCortaCorta+'/graba_idr_Plagicidas',
+					success: function (htmlResponse){
+						console.log('entro a la funcion sucesso de grabar idr_plagicidas');
+						console.log(htmlResponse);
+						//alert(htmlResponse);
+						
+						if (htmlResponse['SITUACION_REGISTRO']=='EXITO'){
+							$("#divBtnGrabaIDRPlaguicidas").hide();
+							alert('Informe de Resultado Grabado');
+						}
+						
+					},
+				}); // fin del ajax
+				//alert('saleidno del ajax para grabar idr de plagicidas');
+				console.log('saleidno del ajax para grabar idr de plagicidas');
+			
+			}  // FIN DEL CONFIRM
+		}// FIN DEL IF PASOS PREVIOS A LA VALIDACION
+				
+		
+	});
+	/***************************************************************/
 	
 }); // FIN DEL JQUERY

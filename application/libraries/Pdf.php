@@ -318,6 +318,17 @@
         		$nInc = round( $nInc );
         		//$nInc = $nInc /2; 		
         	}
+        	/*
+        	print_r('<br/>ancho: ');
+        	print_r($ancho);
+        	print_r('<br/>alto: ');
+        	print_r($alto);
+        	print_r('<br/>Inc: ');
+        	print_r($nInc);
+        	print_r('<br/>Cad: ');
+        	print_r(count($mCad));
+        	print_r('<br/>');
+        	*/
 
         	//$this->setxy($nPosXactual+2,$nPosYactual);// para que no empieze a escribir sobre la linea
         	
@@ -330,7 +341,8 @@
         		$cParrafo = $mCad[$nPosFila];//.'-'.$nPosXactual.'/'.$nPosYactual; // obtenemos parrafo completo
         		//$this->setxy($nPosXactual,$nPosYactual);// para que no empieze a escribir sobre la linea
         		if (count($mCad)==1)  {	// hacer que imprima en el puro medio
-					$this->setXY($nPosXactual,$nPosYactual + ($alto/2)-2);	//--> PENDIENTE DE VERIFICAR..!
+					//$this->setXY($nPosXactual,$nPosYactual + ($alto/2)-2);	//--> PENDIENTE DE VERIFICAR..!
+					$this->setXY($nPosXactual,$nPosYactual );	//--> 2018-01-29 -->PENDIENTE DE VERIFICAR..!
 					//$this->Ln(($alto/2)-2);
 				}
 				
@@ -388,10 +400,20 @@
         	$nLen2= intval($ancho-($ancho*.35)); // no se como es pero asi es.! 2017-07-05
         	$mCad = $this->divide_cadena($txt,$nLen2); // aqui hay problemas.!
         	
+        	
+        	
         	$nInc = $alto/2;
         	if (count($mCad)>0) {
         		$nInc = $alto/ count($mCad);
         	}
+        	
+        	
+			$var = array('Oh', 'yes', 'baby', '!!');
+			//echo Console::log('un_nombre', $var);
+			//echo '<pre>';
+			//print_r($nInc);
+			//echo '</pre>';
+			
 
         	$this->setXY($nPosXactual,$nPosYactual);
         	for ($nPos = 0; $nPos  < count($mCad); $nPos++){				
@@ -577,7 +599,7 @@
 	       }
 
       	}
-      	/* ************************************/
+      	/* ************************************/    	
       	
 		  
 	}

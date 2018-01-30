@@ -151,12 +151,10 @@ $route['modifica_solicitud'] = 'estudios/modifica_solicitud';  // parecida a la 
 
 //2017-08-16
 $route['envia_correo'] = 'idr/envia_correo'; // para mandar el correo de visto bueno
-//$route['correo_idr_microbiologia'] = 'idr/vobo_idr_microbiologia'; // para mandar el correo de visto bueno
-//$route['correo_idr_microbiologia'] = 'idr/vobo_idr_microbiologia'; // para mandar el correo de visto bueno
-//$route['correo_idr_microbiologia'] = 'idr/vobo_idr_microbiologia'; // para mandar el correo de visto bueno
-//$route['correo_idr_microbiologia'] = 'idr/vobo_idr_microbiologia'; // para mandar el correo de visto bueno
 
 $route['libera_formato_solicitud'] = 'estudios/libera_formato_solicitud';
 
 // CANCELACION --> 2017-12-06
 $route['cancela_muestra_solicitud'] = 'estudios/cancela_muestra_solicitud';
+
+$route['favicon.ico'] = 'estudios/empty_response';//2018-01-29 --> intentando corregir el error de favicon.ico que me marca en el log

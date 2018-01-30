@@ -54,9 +54,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
              
               <?php if ($_SESSION['user_tipo']=='A') { ?>
                 <li><a href="<?php echo base_url('permisos_usuario'); ?>">Permisos</a></li>
-              <?php } ?>     
-              
-              
+              <?php } ?>   
 		      
 
             </ul>

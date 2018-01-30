@@ -377,16 +377,17 @@ class idr extends CI_Controller {
 			
 			$this->load->view('plantillas/head', $data);
 			$this->load->view('plantillas/header', $data);
-			//$this->load->view('idr/v_idr_microbiologia', $data); // susependid 17/01/18
-			$this->load->view('idr/v_idr_microbiologia2', $data); // anexado 2
-
+			//$this->load->view('idr/v_idr_microbiologia', $data);
+			$this->load->view('idr/v_idr_microbiologia2', $data); // -->2018-01-17 --> anexar col total/fecal y e coli dentro de la columna resultado
 			$this->load->view('plantillas/footer', $data);			
 		} // fin de !is_null( idmetodologia)		
 	} // fin de idr_microbiologicos	
 /****************FIN DEL IDR DE MICROBIOLOGICOS***********************************/	
 	public function graba_o_corrige_idr_microbiologia(){ // is ajax es para que grabe el idr de microbiologia graba_idr_microbiologia y ademas ahora actualiza  2017-08-21
 		$lRet = false;		
+		//var datos={'idIDR':idIDR, 'id_muestra':idMuestra, 'id_metodologia': idMetodologia, 'analisis_solicitado_microbiologia':analisis,'metodo_prueba_microbiologia':metodo,'referencia_microbiologia':referencia,'observacion_microbiologia':obs,'condiciones_microbiologia':condiciones,'resultado_microbiologia':resultado,'fecha_microbiologia':idFechaFinal,'iniciales_analista_microbiologia':iniciales_analista,'id_usuario_signatario':idUserSignatario  };	
 		//var datos={'idIDR':idIDR, 'id_muestra':idMuestra, 'id_metodologia': idMetodologia, 'analisis_solicitado_microbiologia':analisis,'metodo_prueba_microbiologia':metodo,'referencia_microbiologia':referencia,'observacion_microbiologia':obs,'condiciones_microbiologia':condiciones,'resultado_microbiologia':resultado,'fecha_microbiologia':idFechaFinal,'iniciales_analista_microbiologia':iniciales_analista,'id_usuario_signatario':idUserSignatario,'accion':accion,'causas_correccion':causas  };
+		
 		if (isset($_POST['id_metodologia'])){
 			$RespData = array();
 			$idIDR =$_POST['idIDR'];
@@ -1595,5 +1596,101 @@ class idr extends CI_Controller {
 
 	} // fin de la funcion ajax
 	/* ************************************************************************/	
+	/********************************* IDR PLAGICIDAS *************************************/
+	public function idr_plaguicidas_agua( $idMetodologia = null, $idMuestra = null){ // es el primer reporte que se va diseñar!
+		$data = new stdClass();
+		//$idMuestra = 20;// ejemplo unicamente
+		$data->title = 'Sistema de Recepcion de Muestra';
+		$data->contenido = 'idr/v_idr_plaguicidas_agua'; 
+		$data->accion = 'ALTA';
+		$data->panel_title = 'Informe de Resultados';
+		$data->menu_activo = 'servicios';
+		
+		if (!is_null($idMetodologia)) {
+			$data->idMetodologia = $idMetodologia;
+			$data->idMuestra = $idMuestra;
+			$this->load->library('table');
+			//$this->table->set_heading('mg/kg','LC (mg/kg)','C.H.','C.A.');
+			$this->table->set_heading('Analito','Resultado','LC (mg/L)','Técnica','Acciones');
+			$template2 = array(
+			        'table_open' => '<table border="1" id="idTablaIDRPlaguicidasAgua" class="table">'
+			);
+			$this->table->set_template($template2);
+			
+			//$this->db->select('ANALISIS_SOLICITADO_AFLATOXINAS, RESULTADO_AFLATOXINAS, LC_AFLATOXINAS,CH_AFLATOXINAS, CA_AFLATOXINAS, METODO_PRUEBA_AFLATOXINAS');
+			$this->db->select('*');//05/06/2017
+			$this->db->from('idr_enc_plaguicidas_agua');
+			$this->db->join('idr_det_plaguicidas_agua','idr_enc_plaguicidas_agua.id_enc_plaguicidas_agua = idr_det_plaguicidas_agua.id_enc_plaguicidas_agua');
+			$this->db->where('idr_enc_plaguicidas_agua.ID_METODOLOGIA',$idMetodologia);
+
+			$cCad = $this->db->get_compiled_select();
+			$query_result = $this->db->query($cCad)->result_array();
+			
+			//$data->estudio = $this->estudios_model->getAllEstudio( $idMuestra);
+			
+			$data->resultados = $query_result;// proviene del detallado de resultados..!
+			$data->sql = $cCad; // CONOCER LA CONSULTA QUE LO ESTA EJECUTANDO..!
+			
+			// OBTENIENDO EL FOLIO DEL IDR POR AREA					
+			$query_result2 = $this->db->query("select IDR_AQ from folios ")->row();
+			$data->folios = $query_result2;
+
+			// OBTENIENDO LOS ANALITOS...!
+			$data->analitos = $this->db->query('select * from analitos_plaguicidas_agua')->result();
+			$this->load->helper('dropdown');		
+			//  function listData($table,$name,$value,$orderBy=null, $where_nombre_campo=null, $where_variable) {        
+			$data->AnalitosCombo = listData('analitos_plaguicidas_agua','id_analito_plaguicidas_agua', 'nombre_analito_plaguicidas_agua',null,null,null);
+			
+			//OBTENIENDO LOS USUARIOS SIGNATARIOS DE QUIMICA			
+			//					function listData($table,      $nameCpo,   $valueCpo,   $orderBy=null, $where_nombre_campo=null, $where_variable=null) {
+			$data->SignatariosCombo = listData('usuarios','id_usuario','nombre_usuario','nombre_usuario','tipo_usuario','Q');
+
+			if (count($query_result)>0)  {
+				$data->accion = 'EDICION';
+				//2017-09-06 --> para la tabla nomas se ocupan ciertos campos
+				//'Analito','Resultado','LC (mg/kg)','LMP (mg/kg)','Tecnica','Acciones');
+				
+				$cCpo = "ANALITO_PLAGUICIDAS_AGUA,RESULTADO_ANALITO_PLAGUICIDAS_AGUA,LC_PLAGUICIDAS_AGUA,TECNICA_PLAGUICIDAS_AGUA";
+				$cCpo .= ',';				
+				$cBtn = '"<button type=button name=B3 class="'.'"btn btn-info btn-xs btnEliminaAnalitoTabla"'.'"   onclick="'.'"EditaRowDetalladoIdrPlagicidas(this)"'.'" >Editar"';
+				$cBtn .= '"</button>"';
+				$cBtn .= '"<button type=button name=B3 class="'.'"btn btn-danger btn-xs btnEliminaAnalitoTabla"'.'"   onclick="'.'"deleteRowDetalladoIdrPlagicidas(this)"'.'" >Eliminar"';
+				$cBtn .= '"</button>"';				
+				
+				$cCpo .= $cBtn;				
+				
+				$this->db->select( $cCpo);
+				
+				//$this->db->select("ANALITO_PLAGUICIDAS,RESULTADO_ANALITO_PLAGUICIDAS,LC_PLAGUICIDAS,LMP_PLAGUICIDAS,TECNICA_PLAGUICIDAS,''");//05/06/2017
+				$this->db->from('idr_enc_plaguicidas_agua');
+				$this->db->join('idr_det_plaguicidas_agua','idr_enc_plaguicidas_agua.id_enc_plaguicidas_agua = idr_det_plaguicidas_agua.id_enc_plaguicidas_agua');
+				$this->db->where('idr_enc_plaguicidas_agua.ID_METODOLOGIA',$idMetodologia);
+
+				$cCad2 = $this->db->get_compiled_select();
+				$query_result2 = $this->db->query($cCad2)->result_array();
+				
+				$data->resultados_det = $query_result2;// proviene del detallado de resultados..!
+				$data->sql2 = $cCad2; // CONOCER LA CONSULTA QUE LO ESTA EJECUTANDO..!
+			}
+			//2017-07-06
+			$this->db->select('*');
+			$this->db->from('detalle_muestras');
+			$this->db->join('recepcion_muestras','recepcion_muestras.ID_RECEPCION_MUESTRA = detalle_muestras.ID_RECEPCION_MUESTRA');
+			$this->db->join('estudios','estudios.ID_ESTUDIO = detalle_muestras.ID_ESTUDIO');
+			$this->db->where('ID_METODOLOGIA',$idMetodologia);
+			$cCad = $this->db->get_compiled_select();
+			$data->sql2 = $cCad;
+			$query_result = $this->db->query($cCad)->row();
+			$data->datos_metodologia = $query_result;	
+			
+			$this->load->view('plantillas/head', $data);
+			$this->load->view('plantillas/header', $data);
+			$this->load->view('idr/v_idr_plaguicidas_agua', $data);
+			$this->load->view('plantillas/footer', $data);
+			
+		} // fin id !is_null( idmetodologia)		
+		
+	} // fin de IDR_PLAGUICIDAS
+	/*************************************************/
 	
 }

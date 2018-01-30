@@ -118,7 +118,6 @@ class Auth extends CI_Controller {
                 $_SESSION['signatario_usuario'] = $user->SIGNATARIO_USUARIO;
                 $_SESSION['is_logged_in'] 	= TRUE;
                 $_SESSION['alias_usuario'] = $user->ALIAS_USUARIO; //2017-08-22 --> PARA EL MANEJO DE 1 USER EN CAPT DE AUREA
-                //$_SESSION['ruta_firma_usuario'] = $user->ARCHIVO_FOTO_USUARIO ; //2018-01-18
                 $this->session->set_flashdata('mensaje_sucess','Bienvenido ['.$user->NOMBRE_USUARIO.']');
                 redirect(base_url());
 

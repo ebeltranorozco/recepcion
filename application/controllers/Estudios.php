@@ -1,7 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class estudios extends CI_Controller {
-
+	
+	public function empty_response(){
+		return false;
+	}
 	public function __construct()	{
 		parent::__construct();
 		$this->load->model('clientes_model');
@@ -232,10 +235,15 @@ class estudios extends CI_Controller {
 		}
 		//$this->db->order_by('detalle_muestras.STATUS_MUESTRA,recepcion_muestras.FECHA_RECEPCION DESC, detalle_muestras.ID_DETALLE_MUESTRA');
 		$this->db->order_by('recepcion_muestras.FECHA_RECEPCION desc');
-		$this->db->limit(500);
+		$nRegistrosaExportar = 500;
+		if ($_SESSION['user_tipo']=='A'){
+			$nRegistrosaExportar = 1500;
+		}			
+		$this->db->limit($nRegistrosaExportar);
 		$query = $this->db->get();
 		
 		foreach ($query->result() as $row) {
+			$cCad = NULL; //2018-01-29
 	        $cIdMuestra = "'".$row->ID_MUESTRA."'";
 	        $cIdMetodologia = "'". $row->ID_METODOLOGIA."'";
 	        //$data->prueba = $this->db->query("SELECT count(ID_MUESTRA) as Total_Ensayos FROM `detalle_muestras` JOIN `recepcion_muestras` ON `detalle_muestras`.`ID_RECEPCION_MUESTRA` = `recepcion_muestras`.`ID_RECEPCION_MUESTRA`")->row();	        
@@ -246,15 +254,20 @@ class estudios extends CI_Controller {
 	        if ($row->ID_IDR == 1 ){ $cCad = "select FECHA_FINAL_AFLATOXINAS as FechaFinal from idr_aflatoxinas where ID_METODOLOGIA = $cIdMetodologia "; }
 	        if ($row->ID_IDR == 2 ){ $cCad = "select FECHA_FINAL_PLAGUICIDAS as FechaFinal from idr_enc_plaguicidas where ID_METODOLOGIA = $cIdMetodologia "; }
 	        if ($row->ID_IDR == 3 ){ $cCad = "select FECHA_FINAL_MICROBIOLOGIA as FechaFinal from idr_microbiologia where ID_METODOLOGIA = $cIdMetodologia "; }
+			if ($row->ID_IDR == 4 ){ $cCad = "select FECHA_FINAL_MERCURIO as FechaFinal from idr_mercurio where ID_METODOLOGIA = $cIdMetodologia "; }
 	        if ($row->ID_IDR == 5 ){ $cCad = "select FECHA_FINAL_METALES as FechaFinal from idr_enc_metales where ID_METODOLOGIA = $cIdMetodologia "; }
-	        if ($row->ID_IDR == 4 ){ $cCad = "select FECHA_FINAL_MERCURIO as FechaFinal from idr_mercurio where ID_METODOLOGIA = $cIdMetodologia "; }
+	        //2018-01-29 --> plaguicidas en agua
+	        if ($row->ID_IDR == 6 ){ $cCad = "select FECHA_FINAL_PLAGUICIDAS_AGUA as FechaFinal from idr_enc_plaguicidas_agua where ID_METODOLOGIA = $cIdMetodologia "; }
 			
-			$FechaFinal = $this->db->query($cCad)->row();			
-			if (count($FechaFinal)>0 ) {
-				$FechaFinal = $FechaFinal->FechaFinal;//->format('d/m/Y');				
-				$row->FechaFinalIDR = substr($FechaFinal,0,10);
+			
+			if ($cCad){ //2018-01-29 --> para evitar errores cuando se dan de alta metodologias nuevas
+				$FechaFinal = $this->db->query($cCad)->row();			
+				if (count($FechaFinal)>0 ) {
+					$FechaFinal = $FechaFinal->FechaFinal;//->format('d/m/Y');				
+					$row->FechaFinalIDR = substr($FechaFinal,0,10);
+				}				
 			}			
-		}		
+		}		// fin del for
 		
 		$data->query = $query->result();
 		$data->sql = $this->db->last_query();

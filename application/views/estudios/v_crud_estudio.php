@@ -121,10 +121,14 @@
 								} // FIN DEL IDR = 1 Aflaxotinas 
 								
 								if ($registro->ID_IDR == 2 ) { // SE TRATA DE PLAGUICIDAS X CROMATOGRAFIA
-									$accion = $accion . '<a style="'.$cStyle.'"  href= "'.base_url('idr/idr_plaguicidas/').$registro->ID_METODOLOGIA.'/'.$registro->ID_MUESTRA.'">';
-									
-								$accion = $accion . '<button type="button" class="btn btn-primary btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-list-alt" aria-hidden="true" data-toggle="tooltip"  title="IDR Plaguicidas"></span></button></a>';	
-									
+									$accion = $accion . '<a style="'.$cStyle.'"  href= "'.base_url('idr/idr_plaguicidas/').$registro->ID_METODOLOGIA.'/'.$registro->ID_MUESTRA.'">';									
+									$accion = $accion . '<button type="button" class="btn btn-primary btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-list-alt" aria-hidden="true" data-toggle="tooltip"  title="IDR Plaguicidas"></span></button></a>';										
+								} // FIN DEL IDR = 1 Aflaxotinas 
+								
+								//2018-01-30 --> nuevo informe de idr de plaguicidas en agua
+								if ($registro->ID_IDR == 6 ) { // SE TRATA DE PLAGUICIDAS EN AGUA
+									$accion = $accion . '<a style="'.$cStyle.'"  href= "'.base_url('idr/idr_plaguicidas_agua/').$registro->ID_METODOLOGIA.'/'.$registro->ID_MUESTRA.'">';									
+									$accion = $accion . '<button type="button" class="btn btn-primary btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-list-alt" aria-hidden="true" data-toggle="tooltip"  title="IDR Plaguicidas en Agua"></span></button></a>';										
 								} // FIN DEL IDR = 1 Aflaxotinas 
 								
 								if ($registro->ID_IDR == 3 ) { // SE TRATA DE MICROBIOLOGIA

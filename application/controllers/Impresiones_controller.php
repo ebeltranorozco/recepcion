@@ -99,7 +99,7 @@ class Impresiones_controller extends CI_Controller {
     $this->pdf->SetFont('Arial','B',8);
     
     //$nPosEnc = array('col1' => 10,'col2'=>35,'col3'=>70,'col4' =>90,'col5' => 105,'col6'=>130,'col7'=>145,'col8' =>160,'col9'=>206);
-    $nPosEnc = array('col1' => 10,'col2'=>70,'col2.5'=>100,'col3'=>140,'col4' =>206);
+    $nPosEnc = array('col1' => 10,'col2'=>70,'col2.5'=>110,'col3'=>150,'col4' =>206);
        
     
     $this->pdf->Multicelda($nPosEnc['col2']-$nPosEnc['col1'],$nInc,utf8_decode('ANALISIS SOLICITADO'),1,'C',1,false);
@@ -115,11 +115,11 @@ class Impresiones_controller extends CI_Controller {
     //2018-01-17 --> anexando primero la columan de resultados por si hubera varias variantes col totales/fecales o un resultado general
 
     $this->pdf->setXY($nPosEnc['col2'],$nRowActual);
+    $nnnVeces = 1;
     $nRowTmp =  $nRowActual;
     if ($cResultado) {
-        $this->pdf->Multicelda($nPosEnc['col3']-$nPosEnc['col2'],$nInc*2,utf8_decode($cResultado),0,'C',2,false);
-        //$this->pdf->ln();
-        $nRowTmp = $this->pdf->getY();
+        $this->pdf->Multicelda($nPosEnc['col3']-$nPosEnc['col2'],$nInc*2,utf8_decode($cResultado),0,'C',2,false);        
+        $nRowTmp = $this->pdf->getY();        
     }
     if ($cResultadoColTotal ){
         $this->pdf->setX($nPosEnc['col2']);
@@ -332,7 +332,7 @@ class Impresiones_controller extends CI_Controller {
   public function idr_encabezado( $data,$dFechaInicialAnalisis = null,$dFechaFinalAnalisis = null){ // encabezado para todos los IDR
 	$dFechaEmision      = date('Y-m-d h:m:s');	
 	if (isset($data[0]->FECHA_PLAGUICIDAS)){ $dFechaEmision = $data[0]->FECHA_PLAGUICIDAS; }
-	if (isset($data[0]->FECHA_METALES)){ $dFechaEmision = $data[0]->FECHA_METALS; }
+	if (isset($data[0]->FECHA_ALTA_METALES)){ $dFechaEmision = $data[0]->FECHA_ALTA_METALES; }
 	if (isset($data[0]->FECHA_AFLATOXINAS)){ $dFechaEmision = $data[0]->FECHA_AFLATOXINAS; }
 	if (isset($data[0]->FECHA_ALTA_MERCURIO)){ $dFechaEmision = $data[0]->FECHA_ALTA_MERCURIO; }
 	if (isset($data[0]->FECHA_ALTA_METALES)){ $dFechaEmision = $data[0]->FECHA_ALTA_METALES; }
@@ -369,7 +369,7 @@ class Impresiones_controller extends CI_Controller {
     
     
     $cOrigenMuestra		= utf8_decode($data[0]->LOTE_MUESTRA);  
-    $IdAsigCliente      = $data[0]->ID_ASIGNADO_CLIENTE;
+    $IdAsigCliente      = utf8_decode($data[0]->ID_ASIGNADO_CLIENTE);
     $nCant              = $data[0]->NO_MUESTRAS;
     $cTemperatura		= $data[0]->TEMPERATURA_MUESTRA;
     $cUbicacion         = 'NA';
@@ -534,6 +534,7 @@ class Impresiones_controller extends CI_Controller {
     $this->pdf->Multicelda($nPosEnc['col11']-$nPosEnc['col9'],$nInc/2,utf8_decode($dFechaHoraTomaMuestra),1,'L',1,false);
     //$this->pdf->ln($nInc/2);       		
     $nPosEnc = array('col1' => 10,'col2'=>20,'col3'=>35,'col4' =>60,'col5' => 90,'col6'=>110,'col7'=>135,'col8' =>155,'col9'=>165,'col10'=>205,'col11'=>206);
+    
 	} // FIN DE LA FUNCION ENCABEZADO...!
   /***************************************************************/
   // FIN DE  LA FUNCION IDR ENCABEZADO ..!
@@ -568,7 +569,7 @@ class Impresiones_controller extends CI_Controller {
     $nLote              = $data[0]->LOTE_MUESTRA;
     $dFechaRecepcion    = $data[0]->FECHA_RECEPCION;
     $cUbicacion         = 'NA';
-    $IdAsigCliente      = $data[0]->ID_CLIENTE;
+    $IdAsigCliente      = utf8_decode($data[0]->ID_CLIENTE);
     $dFechaAnalisis     = $data[0]->FECHA_ANALISIS;
     //RESULTADOS
     $cAnalisisSolicitado = $data[0]->ANALISIS_SOLICITADO;    
@@ -945,7 +946,7 @@ class Impresiones_controller extends CI_Controller {
         exit();        
     }
     // CARGANDO LAS VARIABLES
-    $nFolio          = date('y').'-'.str_pad($data[0]->ID_RECEPCION_MUESTRA,4,'0',STR_PAD_LEFT);
+    $nFolio          = date('y').'-'.str_pad($data[0]->FOLIO_SOLICITUD,4,'0',STR_PAD_LEFT);
     $dFechaHora      = strtotime($data[0]->FECHA_RECEPCION);
     // add 10/05/2017
     //$dFechaHora      = date($dFechaHora,'Y-m-d H:i a');
@@ -1089,8 +1090,6 @@ class Impresiones_controller extends CI_Controller {
     $this->pdf->ln(); 
 
     
-
-    
     
     $this->pdf->setx($nPosEnc['col1']);
     $this->pdf->cell($nPosEnc['col3']-$nPosEnc['col1'],$nInc,'Responsable de la toma de muestra:',1,0,'L'); 
@@ -1176,7 +1175,16 @@ class Impresiones_controller extends CI_Controller {
 	$cLeyendaReconocido = "";
 	
 	$r = $this->pdf->GetY();
+	
+	$nTotalMuestras = 1;
+	$cIdMuestraActual = $data[$i]->ID_MUESTRA;
+	
     foreach ($data as $key => $value) { // ciclo de las metodoligas
+    	//2018-01-30 --> SABER EL TOTAL DE MUESTRAS
+    	if ($data[$i]->ID_MUESTRA != $cIdMuestraActual){
+			$nTotalMuestras += 1;
+			$cIdMuestraActual = $data[$i]->ID_MUESTRA;
+		}
     	$this->pdf->SetFont('Arial','',7);	
     	//$r = $this->pdf->GetY();
     	
@@ -1354,10 +1362,12 @@ class Impresiones_controller extends CI_Controller {
     
     // imprimiendo las leyendas 
     
-    $this->pdf->sety($r+5);    
+    //$this->pdf->sety($r+5);    
+    $this->pdf->sety($r);    //2018-01-30 --> le quite el +5 para poner la leyenda de total de muestras recibidas
     
     $this->pdf->setx($nPosEnc['col1']);
     // leyendas de recien adecuacion dependiendo de los estudios que participan
+    $this->pdf->cell(30,$nInc2,utf8_decode('Total de Muestras Recibidas: '.$nTotalMuestras),0,2);
     $this->pdf->cell(30,$nInc2,utf8_decode('El periodo establecido para realizar modificaciones (datos del cliente o de facturación) en la Solicitud de servicios de laboratorio, es de tres días hábiles a partir de '),0,2);
     $this->pdf->cell(30,$nInc2,utf8_decode('la aceptacion de su muestra, previa solicitud por escrito.'),0,2);
     $this->pdf->cell(80,$nInc2,utf8_decode('El tiempo estimado para la emisión del informe de resultados es de 10 días hábiles.'),0,2);
@@ -1501,7 +1511,7 @@ class Impresiones_controller extends CI_Controller {
     $cEmail           = $data[0]->EMAIL_CLIENTE;     
 
 	// 24/05/2017
- 	$nFolio          = date('y').'-'.str_pad($data[0]->ID_RECEPCION_MUESTRA,4,'0',STR_PAD_LEFT);
+ 	$nFolio          = date('y').'-'.str_pad($data[0]->FOLIO_SOLICITUD,4,'0',STR_PAD_LEFT);
     $dFechaHora      = strtotime($data[0]->FECHA_RECEPCION);
     $dFechaHora      = date('Y-m-d H:i:s',$dFechaHora);
       
@@ -2580,12 +2590,14 @@ class Impresiones_controller extends CI_Controller {
 	//2017-08-16  --> se va a meter una varioable para la leyenda de los Asteriscos (analitos y metales)
 	
     //$this->pdf->ln($nInc);
-    $cFirmaSignatario   = $data[0]->RUTA_FOTO_USUARIO;
+    $cFirmaSignatario   			= $data[0]->RUTA_FOTO_USUARIO;
+    $nLongFirmaSignatario 			= $data[0]->LONGITUD_FIRMA_USUARIO;
+    $nAltoFirmaSignatario 			= $data[0]->ALTURA_FIRMA_USUARIO;
+    $nDesplazamientoFirmaUsuario 	= $data[0]->DESPLAZAMIENTO_FIRMA_USUARIO;
     if ($cNameIDR == 'PLAGUICIDAS') {
 		$cNombreSignatario	= $data[0]->NOMBRE_USUARIO;
     	$cCargoSignatario	= $data[0]->CARGO_USUARIO;
-    	$cIniciales			= $data[0]->INICIALES_ANALISTA_PLAGUICIDAS;
-        
+    	$cIniciales			 = $data[0]->INICIALES_ANALISTA_PLAGUICIDAS;	
     	
     	$cRefResultado       = $data[0]->REFERENCIA_PLAGUICIDAS;
     	$cObsResultado       = $data[0]->OBSERVACION_PLAGUICIDAS;
@@ -2627,8 +2639,6 @@ class Impresiones_controller extends CI_Controller {
     	$cObsResultado       = $data[0]->OBSERVACION_METALES;
     	$cCondMuestra        = $data[0]->CONDICIONES_METALES;    	
     } // fin del if   // fin del if        
-
-    //$cFotoSignatario    = $_SESSION['ruta_firma_usuario'] ;
         
     // REFERENCIAS DE APKLICACION Y OBSERVCIONES
     
@@ -2678,26 +2688,23 @@ class Impresiones_controller extends CI_Controller {
     $nRowFoto = $this->pdf->getY();
     $this->pdf->ln($nInc);
     
-    
     $this->pdf->cell($nPosEnc['col8']-$nPosEnc['col1'],$nInc/2,'___________________________________________________',0,2,'C');
     $this->pdf->cell($nPosEnc['col8']-$nPosEnc['col1'],$nInc/2,utf8_decode($cNombreSignatario),0,2,'C');
     $this->pdf->cell($nPosEnc['col8']-$nPosEnc['col1'],$nInc/2,utf8_decode($cCargoSignatario),0,2,'C');
-    //$this->pdf->ln($nInc/2);
-    // ANEXAR LA IMAGEN...!
-    
-    //Image(string file [, float x [, float y [, float w [, float h [, string type [, mixed link]]]]]])
-    //$this->pdf->imagen ( $cFotoSignatario,100,$nRowFoto,150,100,'PNG');
-    //$this->pdf->imagen ( 'https://aristeguinoticias.com/wp-content/uploads/2016/01/unnamed.png',10,$nRowFoto);
+    /*
+    $nLongFirmaSignatario 			= $data[0]->LONGITUD_FIRMA_USUARIO;
+    $nAltoFirmaSignatario 			= $data[0]->ALTURA_FIRMA_USUARIO;
+    $nDesplazamientoFirmaUsuario 	= $data[0]->DESPLAZAMIENTO_FIRMA_USUARIO;
+    */
     if ($cFirmaSignatario ) {
-        $this->pdf->Image($cFirmaSignatario,90,$nRowFoto,37);    
+    	//Image(string file [,  x [,  y [,  w [,  h [, string type [, mixed link]]]]]])
+        $this->pdf->Image($cFirmaSignatario,90,$nRowFoto+$nDesplazamientoFirmaUsuario,$nLongFirmaSignatario,$nAltoFirmaSignatario);    
     }
+    
 
     if (file_exists('assets/img/sello/sello_laria.png')) {
         $this->pdf->image( 'assets/img/sello/sello_laria.png',160, $nRowFoto,40);    
     }
-    
-
-    
 
     // DEMAS COSAS
     
@@ -2893,7 +2900,7 @@ class Impresiones_controller extends CI_Controller {
     $this->idr_encabezado($data,$dFechaInicialAnalisis	,$dFechaFinalAnalisis );   
     
     // DATOS DEL RESULTADO
-    //$this->pdf->ln(1);
+    $this->pdf->ln();
     $this->pdf->SetFont('Arial','B',8);
     $this->pdf->cell(0,$nInc,'RESULTADOS',0,1,'C');
     //$this->pdf->ln($nInc/2);    
