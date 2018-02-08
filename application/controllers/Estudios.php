@@ -1656,4 +1656,74 @@ class estudios extends CI_Controller {
 		echo $lRet;		
 	}
 	/**************************************************************/
+	// 2018-01-30 --> SE ANEXAR POR INCLUIR EL NUEVO IDR DE PLAGUICIDAS EN AGUA, SON 4 METODOS
+	/* *************************************************************/
+	public function obtener_todos_los_analitos_acreditados_plaguicidas_agua(){ // is ajax, viene de idr_plagicidas ->funciones.js
+		$lRet = false;
+		$this->db->select('*');
+		$this->db->from('analitos_plaguicidas_agua');
+		$this->db->order_by('NOMBRE_ANALITO_PLAGUICIDAS_AGUA');
+		$this->db->where('ACREDITADO_ANALITO_PLAGUICIDAS_AGUA','S');
+		$lRet = $this->db->get();
+		$RespData = array();
+		$RespData['SQL'] = $this->db->last_query();
+		$RespData['RESULTADO'] = $lRet->result();
+		
+		header('Content-type: application/json; charset=utf-8');
+		$lRet = json_encode($RespData);
+		
+		echo $lRet;		
+	}
+
+	/* *************************************************************/
+	public function obtener_todos_los_analitos_plaguicidas_agua(){ // is ajax, viene de idr_plagicidas ->funciones.js
+		$lRet = false;
+		$this->db->select('*');
+		$this->db->from('analitos_plaguicidas_agua');
+		$this->db->order_by('NOMBRE_ANALITO_PLAGUICIDAS_AGUA');
+		$lRet = $this->db->get();
+		$RespData = array();
+		$RespData['SQL'] = $this->db->last_query();
+		$RespData['RESULTADO'] = $lRet->result();
+		
+		header('Content-type: application/json; charset=utf-8');
+		$lRet = json_encode($RespData);
+		
+		echo $lRet;		
+	}
+	/* ******************************************************************* */
+	/*************************************************************************/
+	public function obtener_todos_los_analitos_x_metodo_lc_plaguicidas_agua(){ // is ajax, viene de idr_plagicidas ->funciones.js
+		$lRet = false;
+		$this->db->select('*');
+		$this->db->from('analitos_plaguicidas_agua');
+		$this->db->order_by('NOMBRE_ANALITO_PLAGUICIDAS_AGUA');		
+		$this->db->like( 'TECNICA_ANALITO_PLAGUICIDAS_AGUA','LC');
+		$lRet = $this->db->get();
+		$RespData = array();
+		$RespData['SQL'] = $this->db->last_query();
+		$RespData['RESULTADO'] = $lRet->result();
+		
+		header('Content-type: application/json; charset=utf-8');
+		$lRet = json_encode($RespData);		
+		echo $lRet;		
+	}
+	/***************************************************************************/
+	public function obtener_todos_los_analitos_x_metodo_gc_plaguicidas_agua(){ // is ajax, viene de idr_plagicidas ->funciones.js
+		$lRet = false;
+		$this->db->select('*');
+		$this->db->from('analitos_plaguicidas_agua');
+		$this->db->order_by('NOMBRE_ANALITO_PLAGUICIDAS_AGUA');
+		$this->db->like( 'TECNICA_ANALITO_PLAGUICIDAS_AGUA','GC');
+		$lRet = $this->db->get();
+		$RespData = array();
+		$RespData['SQL'] = $this->db->last_query();
+		$RespData['RESULTADO'] = $lRet->result();
+		
+		header('Content-type: application/json; charset=utf-8');
+		$lRet = json_encode($RespData);		
+		echo $lRet;		
+	}
+	/**************************************************************/
+
 }

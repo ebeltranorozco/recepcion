@@ -106,12 +106,21 @@ $route['actualiza_status_metodologia'] = 'idr/actualiza_status_metodologia';
 $route['obtener_todos_los_analitos'] = 'estudios/obtener_todos_los_analitos'; //consulta sin parametros unicamente para traer mediante ajax los analitos a mi file funciones, se usa en el idr de plagicidas
 $route['obtener_todos_los_analitos_acreditados'] = 'estudios/obtener_todos_los_analitos_acreditados';
 
+
 //2017-08-09
 $route['obtener_todos_los_metales'] = 'estudios/obtener_todos_los_metales';
 $route['obtener_todos_los_metales_acreditados']	= 'estudios/obtener_todos_los_metales_acreditados';
 //-2017-12-07
 $route['obtener_todos_los_analitos_x_metodo_lc'] = 'estudios/obtener_todos_los_analitos_x_metodo_lc';
 $route['obtener_todos_los_analitos_x_metodo_gc'] = 'estudios/obtener_todos_los_analitos_x_metodo_gc';
+
+//2018-01-30 --> creando los ajax de los botones que me traen los analitos en el idr nuevo de plag en agua
+$route['obtener_todos_los_analitos_plaguicidas_agua'] 				= 'estudios/obtener_todos_los_analitos_plaguicidas_agua';
+$route['obtener_todos_los_metales_acreditados_plaguicidas_agua']	= 'estudios/obtener_todos_los_metales_acreditados_plaguicidas_agua';
+$route['obtener_todos_los_analitos_x_metodo_lc_plaguicidas_agua'] 	= 'estudios/obtener_todos_los_analitos_x_metodo_lc_plaguicidas_agua';
+$route['obtener_todos_los_analitos_x_metodo_gc_plaguicidas_agua'] 	= 'estudios/obtener_todos_los_analitos_x_metodo_gc_plaguicidas_agua';
+
+
 
 $route['reporte_resultados'] = 'estudios/reporte_resultados' ; // agregado desde el menu --> informe de resultados de los estudios realizado, solicitado por calidad
 
@@ -133,7 +142,11 @@ $route['reiniciar_folios_ensayos'] = 'estudios/reiniciar_folios_ensayos';
 $route['reiniciar_idrs'] = 'estudios/reiniciar_idrs';
 
 //2017-07-10
-$route['graba_idr_Plagicidas'] = 'idr/plagicidas';
+$route['graba_idr_Plagicidas'] = 'idr/plaguicidas';
+
+
+$route['graba_idr_Plagicidas_agua'] = 'idr/plaguicidas_agua'; //2018-02-01
+
 //2017-07-11
 $route['get_nombre_y_cargo_by_id_usuario'] = 'auth/get_nombre_y_cargo_by_id_usuario';
 

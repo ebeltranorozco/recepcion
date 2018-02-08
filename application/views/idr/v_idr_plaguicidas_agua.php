@@ -66,6 +66,7 @@ echo '<br/>Seccion [=';
 //var_dump($_SESSION);
 */
 if ($accion =="ALTA") {
+	$selected = 1; //2018-02-01
 	
 	$cIdMuestra['value'] = $idMuestra;
 	$cIdMetodologia['value'] = $idMetodologia;
@@ -99,28 +100,33 @@ if ($accion =="ALTA") {
 	$cIDR['value'] = $folios->IDR_AQ+1;
 } // FIN DE LA ALTA
 
+//var_dump($resultados);
+//echo 'Accion:' . $accion;
 if ($accion == 'EDICION'){
+
+	$selected = $resultados[0]['ID_USUARIO_SIGNATARIO']; //2018-02-01
+	//	echo $selected;
 	$cIDR['value'] = $resultados[0]['ID_IDR'];
 	$cIdMuestra['value'] = $idMuestra;
 	$cIdMetodologia['value'] = $idMetodologia;	
 	
-	$cTmp = utf8_decode($resultados[0]['ANALISIS_SOLICITADO_PLAGUICIDAS']);
+	$cTmp = utf8_decode($resultados[0]['ANALISIS_SOLICITADO_PLAGUICIDAS_AGUA']);
 	$cAnalisisSolicitado['value'] = utf8_encode($cTmp );	
-	$cTmp = utf8_decode($resultados[0]['METODO_PRUEBA_PLAGUICIDAS']);
+	$cTmp = utf8_decode($resultados[0]['METODO_PRUEBA_PLAGUICIDAS_AGUA']);
 	$cMetodoPrueba['value'] = utf8_encode($cTmp);	
-	$cTmp = utf8_decode($resultados[0]['REFERENCIA_PLAGUICIDAS']);
+	$cTmp = utf8_decode($resultados[0]['REFERENCIA_PLAGUICIDAS_AGUA']);
 	$cReferencia['value'] = utf8_encode($cTmp);	
-	$cTmp = utf8_decode( $resultados[0]['OBSERVACION_PLAGUICIDAS']);	
+	$cTmp = utf8_decode( $resultados[0]['OBSERVACION_PLAGUICIDAS_AGUA']);	
 	$cObsResultado['value'] = utf8_encode($cTmp);
 	// hay q heredarlo..!
-	$cTmp = utf8_decode($resultados[0]['CONDICIONES_PLAGUICIDAS']);
+	$cTmp = utf8_decode($resultados[0]['CONDICIONES_PLAGUICIDAS_AGUA']);
 	$cCondMuestra['value'] = utf8_encode($cTmp);		
 	
-	$cInicialesAnalista['value'] = $resultados[0]['INICIALES_ANALISTA_PLAGUICIDAS'];
-	$dFechaFinal['value']  = $resultados[0]['FECHA_FINAL_PLAGUICIDAS'];
+	$cInicialesAnalista['value'] = $resultados[0]['INICIALES_ANALISTA_PLAGUICIDAS_AGUA'];
+	$dFechaFinal['value']  = $resultados[0]['FECHA_FINAL_PLAGUICIDAS_AGUA'];
 	$cValueOpcSelected = $resultados[0]['ID_USUARIO_SIGNATARIO'];
 	$cCausasCorreccion['value'] = '';	
-	$cIdTabla['value'] = $resultados[0]['ID_ENC_PLAGUICIDAS'];
+	$cIdTabla['value'] = $resultados[0]['ID_ENC_PLAGUICIDAS_AGUA'];
 	//$cResultado_mercurio['value']	 = $resultados->RESULTADO_MERCURIO;
 	//$cLC['value'] = $resultados->LC_MERCURIO;
 	//$cLMP['value'] = $resultados->LMP_MERCURIO;	
@@ -138,7 +144,7 @@ if (!$datos_metodologia->GENERAR_IDR_MUESTRA) {
 	$lGeneraFolioIDR['checked'] = TRUE;
 }
 ?>
-<!------------------------------------------------------------------------------------------->
+<!-- **************************************************************************************** -->
 
 <?php 
 //variables temporal para la segunda tabla ..!
@@ -148,80 +154,8 @@ $cLC2 = 			array('id'=>'idLC_analito2','class'=>'form-control' ,'value' => set_v
 $cTecnica2 =		array('id'=>'idTecnica2','class'=>'form-control' ,'value' => set_value('idTecnica2'));
 $cAnalito2 = 		array('id'=>'idAnalito2','class'=>'form-control' ,'value' => set_value('idAnalito2'),'readonly'=>true);
 ?>
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">EDICION DEL ANALITO</h4>            
-          </div> <!--fin de modal header -->
 
-          <div class="modal-body">
-
-            <!-- vamos agregar las alertas -->
-            <div id="msg_alerta_modal_IDRPlagicidas"></div> 
-           
-            <div class="row">
-              <div class="form-group">
-                    <label  class="col-sm-8 control-label" for="id_cte">ANALITO:</label>                    
-                    <div class="col-sm-10">                        
-                        <?php echo form_input($cAnalito2); ?>
-                    </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="form-group">
-                    <label  class="col-sm-8 control-label" for="id_cte">RESULTADO:</label>                    
-                    <div class="col-sm-10">                        
-                        <?php echo form_input($cResultado2); ?>
-                    </div>
-              </div>
-            </div>
-            
-            <div class="row">
-              <div class="form-group">
-                    <label  class="col-sm-8 control-label" for="id_cte">LIMITE DE CUANTIFICACION:</label>                    
-                    <div class="col-sm-10">                        
-                        <?php echo form_input($cLC2); ?>
-                    </div>
-              </div>
-            </div>
-
-            <div class="row">              
-              <div class="form-group">
-                    <label  class="col-sm-8 control-label" for="desc_muestra">LIMITE MAXIMO PERMISIBLE:</label>                    
-                    <div class="col-sm-10">                        
-                        <?php echo form_input($cLMP2); ?>
-                    </div>
-              </div> 
-            </div>
-
-            <div class="row">
-              <div class="form-group">
-                    <label  class="col-sm-8 control-label" for="Lote">TECNICA:</label>                    
-                    <div class="col-sm-10">                        
-                        <?php echo form_input($cTecnica2); ?>
-                    </div>
-              </div>
-            </div>     
-
-          </div> <!--fin de modal body -->
-          
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal" id="idBtnCloseModalIDRPlagicidas">Salir</button>
-            <!--<button type="button" class="btn btn-primary">Anexar</button>-->
-            <button type="button" class="btn btn-primary" data-dismiss="modal" name="btnAddDatosIDRPlagicidas" id="btnAddDatosIDRPlagicidas">Actualizar</button>
-          </div> <!--fin de modal footer -->
-        
-        </div> <!--fin de modal content -->
-      
-      </div> <!--fin de modal dialog -->
-    </div> <!-- fin de modal fade (dice q esta de mas esta etiqueta-->
-
-<!------------------------------------------------------------------------------------------->    
+<!-- ********************* PRINCIPAL *************** -->
 
 <hr size=10>
 <center><h4>RESULTADOS</h4></center>
@@ -252,7 +186,7 @@ $cAnalito2 = 		array('id'=>'idAnalito2','class'=>'form-control' ,'value' => set_
 		
 		<div class="form-group col-xs-6 col-sm-2">
 			<label>Signatario</label>			
-			<?php echo form_dropdown('idSignatarioCombo',$SignatariosCombo,$selected = 1,'class="form-control" id="idSignatarioCombo"'); ?>			
+			<?php echo form_dropdown('idSignatarioCombo',$SignatariosCombo,$selected ,'class="form-control" id="idSignatarioCombo"'); ?>			
 			<label>Iniciales Analista(s)</label>			
 			<?php echo form_input( $cInicialesAnalista) ?>;
 		</div>
@@ -271,7 +205,8 @@ $cAnalito2 = 		array('id'=>'idAnalito2','class'=>'form-control' ,'value' => set_
 		<div class="form-group col-xs-6 col-sm-3">
 			<label>Analito</label>
 			<!--ANEXADO UN COMBOBOX PARA LOS ANALITOS DE ESE ESTUDIO  09/12/2016-->
-			<?php echo form_dropdown('idAnalitoCombo',$AnalitosCombo,$selected = 1,'class="form-control" id="idAnalitoCombo"'); ?>
+
+			<?php echo form_dropdown('idAnalitoCombo',$AnalitosCombo,1  ,'class="form-control" id="idAnalitoCombo"'); ?>
 			<!--<?php// echo form_input($cAnalito); ?>-->
 			
 		</div>
@@ -298,36 +233,45 @@ $cAnalito2 = 		array('id'=>'idAnalito2','class'=>'form-control' ,'value' => set_
 
 		<div class="form-group col-xs-6 col-sm-2">	
 			<label>Anexar Estudio</label>
-			<button type="text" class="btn btn-primary" id="BtnAgregaAnalitoTabla" >Agregar Analito</button>
+			<button type="text" class="btn btn-primary" id="BtnAgregaAnalitoTablaPlaguicidasAgua" >Agregar Analito</button>
 		</div>
+	</div>
+	<div class="row">
 		<div class="form-group col-xs-3 col-sm-2">	
 			<label><br/></label>
 			<?php if ($accion == 'ALTA') { ?>		
-				<button type="text" class="btn btn-info" id="BtnAgregaTodosAnalitosTabla" >Anexar Todos</button>				
+				<button type="text" class="btn btn-info" id="BtnAgregaTodosAnalitosTablaPlaguicidasAgua" >Anexar Todos</button>				
 			<?php } ?>			
 		</div>
 		
 		<div class="form-group col-xs-3 col-sm-3">	
 			<label><br/></label>
 			<?php if ($accion == 'ALTA') { ?>			
-				<button type="text" class="btn btn-info" id="BtnAgregaAnalitosAcreditadosTabla" >Solo Analitos Acreditados</button>
+				<button type="text" class="btn btn-info" id="BtnAgregaAnalitosAcreditadosTablaPlaguicidasAgua" >Solo Analitos Acreditados</button>
 			<?php } ?>			
 		</div>
 		
 		<!--2017-12-07  anexar botones para separa analitos lc y gc-->
-		<div class="form-group col-xs-3 col-sm-3">	
+		<div class="form-group col-xs-3 col-sm-2">	
 			<label><br/></label>
 			<?php if ($accion == 'ALTA') { ?>			
-				<button type="text" class="btn btn-info" id="BtnAgregaAnalitosxMetodoLC" >Analitos por Metodo LC</button>
+				<button type="text" class="btn btn-info" id="BtnAgregaAnalitosxMetodoLCPlaguicidasAgua" >Analitos por LC</button>
 			<?php } ?>			
 		</div>
 		
-		<div class="form-group col-xs-3 col-sm-3">	
+		<div class="form-group col-xs-3 col-sm-2">	
 			<label><br/></label>
 			<?php if ($accion == 'ALTA') { ?>			
-				<button type="text" class="btn btn-info" id="BtnAgregaAnalitosxMetodoGC" >Analitos por Metodo GC</button>
+				<button type="text" class="btn btn-info" id="BtnAgregaAnalitosxMetodoGCPlaguicidasAgua" >Analitos por GC</button>
 			<?php } ?>			
 		</div>
+
+		<div class="form-group col-xs-3 col-sm-3">	 <!-- 2018-02-07 subir archivo csv -->
+			<label><br/></label>
+			<?php if ($accion == 'ALTA') { ?>			
+				<button type="text" data-toggle="modal" data-target="#exampleModal2" class="btn btn-warning" id="BtnAgregaAnalitosfromFilePlaguicidasAgua" >Desde Archivo</button>
+			<?php } ?>			
+		</div>		
 
 	</div> <!-- fin del row -->
 	
@@ -433,3 +377,135 @@ $cAnalito2 = 		array('id'=>'idAnalito2','class'=>'form-control' ,'value' => set_
 	
 	
 </div> <!-- fin del container -->
+
+
+<!-- ****************************************** COMIENZA LO MODAL *************************************** -->
+<!-- ****************************************** COMIENZA LO MODAL *************************************** -->
+<!-- ****************************************** COMIENZA LO MODAL *************************************** -->
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">EDICION DEL ANALITO</h4>            
+          </div> <!--fin de modal header -->
+
+          <div class="modal-body">
+
+            <!-- vamos agregar las alertas -->
+            <div id="msg_alerta_modal_IDRPlagicidas"></div> 
+           
+            <div class="row">
+              <div class="form-group">
+                    <label  class="col-sm-8 control-label" for="id_cte">ANALITO:</label>                    
+                    <div class="col-sm-10">                        
+                        <?php echo form_input($cAnalito2); ?>
+                    </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group">
+                    <label  class="col-sm-8 control-label" for="id_cte">RESULTADO:</label>                    
+                    <div class="col-sm-10">                        
+                        <?php echo form_input($cResultado2); ?>
+                    </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="form-group">
+                    <label  class="col-sm-8 control-label" for="id_cte">LIMITE DE CUANTIFICACION:</label>                    
+                    <div class="col-sm-10">                        
+                        <?php echo form_input($cLC2); ?>
+                    </div>
+              </div>
+            </div>
+
+            <div class="row">
+            <!--              
+              <div class="form-group">
+                    <label  class="col-sm-8 control-label" for="desc_muestra">LIMITE MAXIMO PERMISIBLE:</label>                    
+                    <div class="col-sm-10">                        
+                        <?php echo form_input($cLMP2); ?>
+                    </div>
+              </div> 
+          	-->
+            </div>
+
+            <div class="row">
+              <div class="form-group">
+                    <label  class="col-sm-8 control-label" for="Lote">TECNICA:</label>                    
+                    <div class="col-sm-10">                        
+                        <?php echo form_input($cTecnica2); ?>
+                    </div>
+              </div>
+            </div>     
+
+          </div> <!--fin de modal body -->
+          
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" id="idBtnCloseModalIDRPlagicidas">Salir</button>
+            <!--<button type="button" class="btn btn-primary">Anexar</button>-->
+            <button type="button" class="btn btn-primary" data-dismiss="modal" name="btnAddDatosIDRPlagicidasAgua" id="btnAddDatosIDRPlagicidasAgua">Actualizar</button>
+          </div> <!--fin de modal footer -->
+        
+        </div> <!--fin de modal content -->
+      
+    </div> <!--fin de modal dialog -->
+</div> <!-- fin de modal fade (dice q esta de mas esta etiqueta-->
+
+<!-- ******************************************************************************  -->    
+<?php //variables empleadas en esta modal
+	$nRowData = 		array('id'=>'row_data','class'=>'form-control' ,'value' => set_value('row_data'),'value'=>'2');
+	$cFile		= array( 'id'=>'file_csv','name'=>'file_csv','class'=>'form-control','accept'=>'text/csv,.csv');
+?>
+<div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">IMPORTAR CSV</h4>            
+          </div> <!--fin de modal header -->
+
+          <div class="modal-body">
+
+            <!-- vamos agregar las alertas -->
+            <div id="msg_alerta_modal_IDRPlagicidas_agua"></div> 
+           
+            <div class="row">
+              <div class="form-group">
+                    <label  class="col-sm-8 control-label" for="id_cte">ARCHIVO CSV:</label>                    
+                    <div class="col-sm-12">                        
+                        <!-- <input type="file" name="file_csv" class="form-control" accept="text/csv,.csv" /> -->
+                        <?php echo form_upload( $cFile); ?>
+                    </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group">
+                    <label  class="col-sm-8 control-label" for="id_cte">RENGLON REGISTRO DE DATOS:</label>                    
+                    <div class="col-sm-12">                                       
+                        <?php echo form_input($nRowData); ?>
+                    </div>
+              </div>
+            </div>            
+            
+          </div> <!--fin de modal body -->
+          
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" id="idBtnCloseModalIDRPlagicidas2">Salir</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" name="btnAddDatosIDRPlagicidasAgua2" id="btnAddDatosIDRPlagicidasAgua2">Procesar</button>
+          </div> <!--fin de modal footer -->
+        
+        </div> <!--fin de modal content -->
+      
+    </div> <!--fin de modal dialog -->
+</div> <!-- fin de modal fade (dice q esta de mas esta etiqueta-->
+<!-- ******************************************************************************  -->    

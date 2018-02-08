@@ -170,6 +170,11 @@
 							$accion = $accion . '<a target= "new" href= "'.base_url('impresiones_controller/idr_plaguicidas/').$registro->ID_DETALLE_MUESTRA.'">';
 							$accion = $accion . '<button type="button" data-toggle="tooltip"  title="IDR Plaguicidas" class="btn btn-default btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-print" aria-hidden="true"></span></button></a>';
 						} // FIN REPORTE IDR $REGISTRO->ID_IDR
+
+						if ($registro->ID_IDR == 6 ) { // SE TRATA DE PLAGUICIDAS EN AGUA //2018-02-07
+							$accion = $accion . '<a target= "new" href= "'.base_url('impresiones_controller/idr_plaguicidas_agua/').$registro->ID_DETALLE_MUESTRA.'">';
+							$accion = $accion . '<button type="button" data-toggle="tooltip"  title="IDR Plaguicidas en Agua" class="btn btn-default btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-print" aria-hidden="true"></span></button></a>';
+						} // FIN REPORTE IDR $REGISTRO->ID_IDR
 								
 						if ($registro->ID_IDR == 3 ) { // SE TRATA DE MICROBIOLOGICO
 							$accion = $accion . '<a target= "new" href= "'.base_url('impresiones_controller/idr_microbiologia/').$registro->ID_DETALLE_MUESTRA.'">';
@@ -210,13 +215,16 @@
 							} // FIN REPORTE IDR $REGISTRO->ID_IDR
 									
 							if ($registro->ID_IDR == 2 ) { // SE TRATA DE PLAGUICIDAS 
-							  
-								//$accion = $accion . '<a target= "new" href= "'.base_url('idr/correcciones_idr_plaguicidas/').$registro->ID_METODOLOGIA.'/'.$registro->ID_MUESTRA.'">';
-								//$accion = $accion . '<a style="'.$cStyle.'"  href= "'.base_url('idr/idr_plaguicidas/').$registro->ID_METODOLOGIA.'/'.$registro->ID_MUESTRA.'">';
-								$accion = $accion . '<a target= "new" href= "'.base_url('idr/idr_plaguicidas/').$registro->ID_METODOLOGIA.'/'.$registro->ID_MUESTRA.'">';
+							  	$accion = $accion . '<a target= "new" href= "'.base_url('idr/idr_plaguicidas/').$registro->ID_METODOLOGIA.'/'.$registro->ID_MUESTRA.'">';
 								$accion = $accion . '<button type="button" data-toggle="tooltip"  title="Corrección IDR Plaguicidas" class="btn btn-warning btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></button></a>';							  
-								
 							} // FIN REPORTE IDR $REGISTRO->ID_IDR
+
+
+							/*if ($registro->ID_IDR == 6 ) { // SE TRATA DE PLAGUICIDAS 
+							  	$accion = $accion . '<a target= "new" href= "'.base_url('idr/idr_plaguicidas_agua/').$registro->ID_METODOLOGIA.'/'.$registro->ID_MUESTRA.'">';
+								$accion = $accion . '<button type="button" data-toggle="tooltip"  title="Corrección IDR Plaguicidas en Agua" class="btn btn-warning btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></button></a>';
+							} // FIN REPORTE IDR $REGISTRO->ID_IDR
+							*/
 									
 							if ($registro->ID_IDR == 3 ) { // SE TRATA DE MICROBIOLOGICO
 								$accion = $accion . '<a target= "new" href= "'.base_url('idr/correcciones_idr_microbiologia/').$registro->ID_METODOLOGIA.'/'.$registro->ID_MUESTRA.'">';

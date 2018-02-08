@@ -2418,7 +2418,7 @@ class Impresiones_controller extends CI_Controller {
   	
   } // fin del idr_metales va a desaparecer..!
 /************************************************************/
-  public function idr_plaguicidas( $idDetalleMuestra = null) { // 2017-07-11
+public function idr_plaguicidas( $idDetalleMuestra = null) { // 2017-07-11
   	// lo primero es obtener los datos necesarios ..!
   	//$this->db->select('*,u_s.NOMBRE_USUARIO AS NOMBRE_SIGNATARIO,u_a.NOMBRE_USUARIO AS NOMBRE_ANALISTA,u_s.CARGO_USUARIO AS CARGO_SIGNATARIO');
   	$this->db->select('*');
@@ -2585,6 +2585,177 @@ class Impresiones_controller extends CI_Controller {
   	
   } // fin del idr_metales
 /******************************************************************************************** */
+public function idr_plaguicidas_agua( $idDetalleMuestra = null) { // 2017-07-11 //2018-02-07
+    // lo primero es obtener los datos necesarios ..!
+    //$this->db->select('*,u_s.NOMBRE_USUARIO AS NOMBRE_SIGNATARIO,u_a.NOMBRE_USUARIO AS NOMBRE_ANALISTA,u_s.CARGO_USUARIO AS CARGO_SIGNATARIO');
+    $this->db->select('*');
+    $this->db->from('detalle_muestras');
+    $this->db->join('recepcion_muestras','detalle_muestras.ID_RECEPCION_MUESTRA = recepcion_muestras.ID_RECEPCION_MUESTRA');
+    $this->db->join('clientes','recepcion_muestras.ID_CLIENTE = clientes.ID_CLIENTE');
+    $this->db->join('estudios','detalle_muestras.ID_ESTUDIO = estudios.ID_ESTUDIO');    
+    $this->db->join('idr_enc_plaguicidas_agua','detalle_muestras.ID_METODOLOGIA = idr_enc_plaguicidas_agua.ID_METODOLOGIA');
+    $this->db->join('idr_det_plaguicidas_agua','idr_enc_plaguicidas_agua.ID_ENC_PLAGUICIDAS_AGUA = idr_det_plaguicidas_agua.ID_ENC_PLAGUICIDAS_AGUA');
+    $this->db->join('usuarios','idr_enc_plaguicidas_agua.ID_USUARIO_SIGNATARIO = usuarios.ID_USUARIO');      
+    $this->db->where('detalle_muestras.ID_DETALLE_MUESTRA',$idDetalleMuestra);    
+    $query = $this->db->get();    
+    $data = $query->result();   
+    
+    
+    if (count($data)== 0) {
+        echo '<script>alert("Error Folio ['.$idDetalleMuestra.' ] Inexistente" );</script>';
+        exit();        
+    }
+            
+    // fin de la obtencion de los datos necesarios ..!       
+    
+    $dFechaEmision      = date('Y-m-d h:m:s');
+    $IDR                = $data[0]->ID_IDR;     
+    $idMuestra          = $data[0]->ID_MUESTRA;
+    
+    
+    $cTipoAnalisis      = $data[0]->AREA_ESTUDIO;
+    //$cOrigen
+    
+    //$dFechaAnalisis     = $data[0]->FECHA_FINAL_PLAGUICIDAS; // FECHA FINAL
+    $dFechaFinalAnalisis    = $data[0]->FECHA_FINAL_PLAGUICIDAS_AGUA; // FECHA FINAL
+    $dFechaInicialAnalisis  = $data[0]->FECHA_INICIO_REAL;
+    $cAnalisis          = $data[0]->ANALISIS_SOLICITADO_PLAGUICIDAS_AGUA;
+    $cMetodoPrueba      = $data[0]->METODO_PRUEBA_PLAGUICIDAS_AGUA;    
+    
+      
+    
+    // generando las variables que requiere el informe..!
+    
+    //PARA VER LO DE EL LOGO DE LA EMA PARA METODOS NO VALIDADOS
+    $cMetodoValidado    = $data[0]->ACREDITADO_ESTUDIO;
+    // EMPEZAMOS EL PDF
+    $this->load->library('pdf');
+    $this->pdf = new pdf( $cMetodoValidado ); //
+     
+    $this->pdf->SetLineWidth(.009); //2017-12-22
+    
+    $nInc =12;
+    
+    // DATOS DEL ENCABEZADO
+    if ($cTipoAnalisis == 'Q'){
+        $this->pdf->setNombreReporte('Informe de Resultados Quimicos');    
+    }else {
+        $this->pdf->setNombreReporte('Informe de Resultados Microbiologicos');    
+    }
+    $this->pdf->AddPage('P','letter'); //l landscape o P normal
+    $this->pdf->SetFillColor(237, 237, 237);
+    $this->pdf->AliasNbPages();     
+    $this->pdf->SetMargins(10,10,10);//márgenes izquierda, arriba y derecha: 
+    
+    $this->pdf->SetAutoPageBreak(true,28);  //#Establecemos el margen inferior: 
+
+    // COMENZAMOS EL REPORTE    
+    
+    //GENERAMOS EL ENCABEZADO GENERAL!
+    //$this->pdf->ln($nInc);    
+    //$this->idr_encabezado($data,$dFechaAnalisis);  
+    $this->idr_encabezado($data,$dFechaInicialAnalisis  ,$dFechaFinalAnalisis );   
+    $nInc = 8;
+    // DATOS DEL RESULTADO
+    $this->pdf->ln($nInc/2);
+    $this->pdf->SetFont('Arial','B',10);
+    $this->pdf->cell(0,$nInc,'RESULTADOS',0,1,'C');
+    //$this->pdf->ln($nInc/2);    
+    
+    
+    $nPosEnc = array('col1' => 10,'col2'=>55,'col3'=>97,'col4' =>125,'col5' => 155,'col6'=>155,'col7'=>175,'col8' =>206);
+    
+    $this->pdf->SetFont('Arial','B',7);
+    $this->pdf->Multicelda($nPosEnc['col2']-$nPosEnc['col1'],$nInc*1.5,utf8_decode('ANÁLISIS SOLICITADO'),1,'C',1,false);
+    $this->pdf->Multicelda($nPosEnc['col4']-$nPosEnc['col2'],$nInc*1.5,utf8_decode('RESULTADO (mg/L)'),1,'C',1,false);    
+    $this->pdf->Multicelda($nPosEnc['col5']-$nPosEnc['col4'],$nInc*1.5,utf8_decode('LÍMITE DE CUANTIFICACIÓN (mg/L)'),1,'C',1,false);
+    //$this->pdf->Multicelda($nPosEnc['col6']-$nPosEnc['col5'],$nInc*1.5,utf8_decode('LMP (mg/L)'),1,'C',1,false);
+    $this->pdf->Multicelda($nPosEnc['col7']-$nPosEnc['col6'],$nInc*1.5,utf8_decode('TÉCNICA'),1,'C',1,false);
+    $this->pdf->Multicelda($nPosEnc['col8']-$nPosEnc['col7'],$nInc*1.5,utf8_decode('MÉTODO DE PRUEBA'),1,'C',2,false);
+
+    // COMENZANDO A ESCRIBIR LOS DATOS..!
+    $nRengOld = $this->pdf->gety();
+    
+    
+    //GENERAR UN CICLO PARA RECORRER TODOS LOS ELEMENTOS
+    $lImprimioMetodologia = false;
+    $cLeyendaAsterisco = null;
+    
+    foreach( $data as $renglon){
+        $this->pdf->SetFont('Arial','',7);
+        $this->pdf->setx($nPosEnc['col2']);
+        $cAnalito = utf8_encode($renglon->ANALITO_PLAGUICIDAS_AGUA);
+        //$cAnalito .= $this->pdf->GetY();
+        $cResultado = utf8_decode($renglon->RESULTADO_ANALITO_PLAGUICIDAS_AGUA);
+        $cLC        = utf8_decode($renglon->LC_PLAGUICIDAS_AGUA);
+        $cLMP       = utf8_decode($renglon->LMP_PLAGUICIDAS_AGUA);
+        $cTecnica   = utf8_decode($renglon->TECNICA_PLAGUICIDAS_AGUA);
+        $this->pdf->Multicelda($nPosEnc['col3']-$nPosEnc['col2'],$nInc/2,utf8_decode($renglon->ANALITO_PLAGUICIDAS_AGUA),1,'C',1,false);
+        
+        $nResultado = (float)$cResultado;
+        if ($nResultado<0.005) { $cResultado = '<LC'; } 
+        $this->pdf->Multicelda($nPosEnc['col4']-$nPosEnc['col3'],$nInc/2,utf8_encode($cResultado),1,'C',1,false);
+        $this->pdf->Multicelda($nPosEnc['col5']-$nPosEnc['col4'],$nInc/2,utf8_encode($cLC),1,'C',1,false);
+        $this->pdf->Multicelda($nPosEnc['col6']-$nPosEnc['col5'],$nInc/2,utf8_encode($cLMP),1,'C',1,false);
+        $this->pdf->Multicelda($nPosEnc['col7']-$nPosEnc['col6'],$nInc/2,utf8_encode($cTecnica),1,'C',1,false);     
+        $this->pdf->ln();
+        $nRengAct = $this->pdf->gety();
+        if( $this->pdf->gety()>$this->pdf->GetPageHeight()-50)  {  // volver a imprimir el cuadro
+        
+            $this->pdf->setxy($nPosEnc['col1'],$nRengOld);
+            $this->pdf->Multicelda($nPosEnc['col2']-$nPosEnc['col1'],$nRengAct-$nRengOld,utf8_decode($cAnalisis),1,'C',1,false);
+            $this->pdf->setxy($nPosEnc['col7'],$nRengOld);
+            $this->pdf->Multicelda($nPosEnc['col8']-$nPosEnc['col7'],$nRengAct-$nRengOld,utf8_decode($cMetodoPrueba),1,'C',2,false);        
+        
+            $this->pdf->AddPage('P','letter'); //l landscape o P normal         
+            $this->pdf->ln();
+            $this->pdf->SetFont('Arial','B',7);
+            
+            $this->pdf->Multicelda($nPosEnc['col2']-$nPosEnc['col1'],$nInc*1.5,utf8_decode('ANÁLISIS SOLICITADO'),1,'C',1,false);
+            $this->pdf->Multicelda($nPosEnc['col4']-$nPosEnc['col2'],$nInc*1.5,utf8_decode('RESULTADO (mg/L)'),1,'C',1,false);    
+            $this->pdf->Multicelda($nPosEnc['col5']-$nPosEnc['col4'],$nInc*1.5,utf8_decode('LÍMITE DE CUANTIFICACIÓN (mg/L)'),1,'C',1,false);
+            //$this->pdf->Multicelda($nPosEnc['col6']-$nPosEnc['col5'],$nInc*1.5,utf8_decode('LMP (mg/L)'),1,'C',1,false);
+            $this->pdf->Multicelda($nPosEnc['col7']-$nPosEnc['col6'],$nInc*1.5,utf8_decode('TÉCNICA'),1,'C',1,false);
+            $this->pdf->Multicelda($nPosEnc['col8']-$nPosEnc['col7'],$nInc*1.5,utf8_decode('MÉTODO DE PRUEBA'),1,'C',2,false);
+
+            /*
+            $this->pdf->Multicelda($nPosEnc['col2']-$nPosEnc['col1'],$nInc*1.5,utf8_decode('ANÁLISIS SOLICITADO'),1,'C',1,false);
+            $this->pdf->Multicelda($nPosEnc['col4']-$nPosEnc['col2'],$nInc*1.5,utf8_decode('RESULTADO (mg/kg)'),1,'C',1,false);    
+            $this->pdf->Multicelda($nPosEnc['col5']-$nPosEnc['col4'],$nInc*1.5,utf8_decode('LÍMITE DE CUANTIFICACIÓN (mg/kg)'),1,'C',1,false);
+            $this->pdf->Multicelda($nPosEnc['col6']-$nPosEnc['col5'],$nInc*1.5,utf8_decode('LMP (mg/kg)'),1,'C',1,false);
+            $this->pdf->Multicelda($nPosEnc['col7']-$nPosEnc['col6'],$nInc*1.5,utf8_decode('TÉCNICA'),1,'C',1,false);
+            $this->pdf->Multicelda($nPosEnc['col8']-$nPosEnc['col7'],$nInc*1.5,utf8_decode('MÉTODO DE PRUEBA'),1,'C',2,false);
+            */
+
+            $nRengOld = $this->pdf->gety();
+            $lImprimioMetodologia = true;
+        }// fin del if $this-->pdfty->get
+        
+        //2017-08-28 --> PARA LA ACREDITACION DE LOS ANALITOS..!        
+        $cAnalito = $renglon->ANALITO_PLAGUICIDAS_AGUA;
+        $cAcreditado = $this->db->query("select * from analitos_plaguicidas_agua where NOMBRE_ANALITO_PLAGUICIDAS_AGUA = '".$cAnalito."'")->row();
+        
+    } 
+    $nRengAct = $this->pdf->gety();
+    
+    $this->pdf->setxy($nPosEnc['col1'],$nRengOld);
+    if (!$lImprimioMetodologia ){ $this->pdf->Multicelda($nPosEnc['col2']-$nPosEnc['col1'],$nRengAct-$nRengOld,utf8_decode($cAnalisis),1,'C',1,false); }
+    if ($lImprimioMetodologia ) { $this->pdf->rect($nPosEnc['col1'],$nRengOld,$nPosEnc['col2']-$nPosEnc['col1'],$nRengAct-$nRengOld); }
+    $this->pdf->setxy($nPosEnc['col7'],$nRengOld);
+    if (!$lImprimioMetodologia) {$this->pdf->Multicelda($nPosEnc['col8']-$nPosEnc['col7'],$nRengAct-$nRengOld,utf8_decode($cMetodoPrueba),1,'C',2,false);}
+    if ($lImprimioMetodologia ) { $this->pdf->rect($nPosEnc['col7'],$nRengOld,$nPosEnc['col8']-$nPosEnc['col7'],$nRengAct-$nRengOld); } 
+    
+    $this->pdf->setxy($nPosEnc['col1'],$nRengAct);
+    $this->idr_pie_de_pagina($data,'PLAGUICIDAS_AGUA',$nInc,$cLeyendaAsterisco); 
+    
+    
+    /* DATOS DEL FOOTER */
+    $this->pdf->SetDisplayMode('fullpage','single');
+    $cNombreArchivo = date('y')."-".$idMuestra;
+    $this->pdf->Output($cNombreArchivo,'I');
+    
+  } // fin del idr_metales
+/******************************************************************************************** */
   public function idr_pie_de_pagina( $data,$cNameIDR,$nInc = 8,$cLeyendaAsterisco = null){ // pie de pagina para todos los IDR
 	//REFERENCIAS DE APLICACION DE LA METODOLOGIA
 	//2017-08-16  --> se va a meter una varioable para la leyenda de los Asteriscos (analitos y metales)
@@ -2603,7 +2774,16 @@ class Impresiones_controller extends CI_Controller {
     	$cObsResultado       = $data[0]->OBSERVACION_PLAGUICIDAS;
     	$cCondMuestra        = $data[0]->CONDICIONES_PLAGUICIDAS;
     	
-	}elseif ($cNameIDR == 'AFLATOXINAS') {
+	}elseif ($cNameIDR == 'PLAGUICIDAS_AGUA') { //2018-02-07
+        $cNombreSignatario  = $data[0]->NOMBRE_USUARIO;
+        $cCargoSignatario   = $data[0]->CARGO_USUARIO;
+        $cIniciales          = $data[0]->INICIALES_ANALISTA_PLAGUICIDAS_AGUA;    
+        
+        $cRefResultado       = $data[0]->REFERENCIA_PLAGUICIDAS_AGUA;
+        $cObsResultado       = $data[0]->OBSERVACION_PLAGUICIDAS_AGUA;
+        $cCondMuestra        = $data[0]->CONDICIONES_PLAGUICIDAS_AGUA;
+        
+    }elseif ($cNameIDR == 'AFLATOXINAS') {
 		$cNombreSignatario	= $data[0]->NOMBRE_USUARIO;
     	$cCargoSignatario	= $data[0]->CARGO_USUARIO;
     	$cIniciales			 = $data[0]->INICIALES_ANALISTA_AFLATOXINAS;

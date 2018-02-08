@@ -117,7 +117,7 @@ class idr extends CI_Controller {
 		
 	} // fin de IDR_PLAGUICIDAS
 /**************************************************************************************/
-	public function plagicidas() { // is ajax	que graba el IDR DE PLAGUICIDAS
+	public function plaguicidas() { // is ajax	que graba el IDR DE PLAGUICIDAS
 	$cRet = "";
 	
 	$enc = isset($_POST['enc']) ? $_POST['enc'] : false; //condicion si existe que tome la variable si no lo asigna false
@@ -1613,7 +1613,7 @@ class idr extends CI_Controller {
 			//$this->table->set_heading('mg/kg','LC (mg/kg)','C.H.','C.A.');
 			$this->table->set_heading('Analito','Resultado','LC (mg/L)','Técnica','Acciones');
 			$template2 = array(
-			        'table_open' => '<table border="1" id="idTablaIDRPlaguicidasAgua" class="table">'
+			        'table_open' => '<table border="1" id="idTablaIDRPlaguicidas" class="table">'
 			);
 			$this->table->set_template($template2);
 			
@@ -1692,5 +1692,168 @@ class idr extends CI_Controller {
 		
 	} // fin de IDR_PLAGUICIDAS
 	/*************************************************/
+	public function plaguicidas_agua() { // plaguicdas en agua 2018-02-01 is ajax	que graba el IDR DE PLAGUICIDAS
+	$cRet = "";
+	
+	$enc = isset($_POST['enc']) ? $_POST['enc'] : false; //condicion si existe que tome la variable si no lo asigna false
+	$det = isset($_POST['det']) ? $_POST['det'] : false;
+	//var datos={'idIDR':idIDR, 'id_muestra':idMuestra, 'id_metodologia': idMetodologia, 'analisis_solicitado_plaguicidas':analisis,'metodo_prueba_plaguicidas':metodo,'referencia_plaguicidas':referencia,'observacion_plaguicidas':obs,'condiciones_plaguicidas':condiciones,'tecnica_plaguicidas':tecnica};
+		
+	if ($enc && $det)	{		
+		// comenzamos a grabar el encabezado del idr de plaguicidas		
+		$RespData = array();
+		//var data = { enc:{'id_idr':idIDR,'id_muestra':idMuestra,'id_metodologia': idMetodologia,'referencia_plaguicidas':referencia,'observacion_plaguicidas':obs,'condiciones_plaguicidas':condiciones, 'analisis_solicitado_plaguicidas':analisis,'metodo_prueba_plaguicidas':metodo,'fecha_plaguicidas':fechafinal,'iniciales_analista_plaguicidas':iniciales_analista,'id_usuario_signatario':idUserSignatario,'accion':accion,'causas_correccion':causas},det:[]}
+		//var data = { enc:{'id_idr':idIDR,'id_muestra':idMuestra,'id_metodologia': idMetodologia,				'referencia_plaguicidas':referencia,'observacion_plaguicidas':obs,				'condiciones_plaguicidas':condiciones, 'analisis_solicitado_plaguicidas':analisis,				'metodo_prueba_plaguicidas':metodo,'fecha_plaguicidas':fechafinal,				'tecnica_plaguicidas':tecnica,'id_usuario_signatario':idUserSignatario},det:[]}	
+		//$idIDR =$_POST['enc']['idIDR'];
+		
+		$idIDR =$enc['id_idr'];
+		//2017-08-28		
+		$idMetodologia = $enc['id_metodologia'];
+		//2017-08-21
+		$cIdUserSignatario = $enc['id_usuario_signatario'];
+		$query = $this->db->query('select NOMBRE_USUARIO, CARGO_USUARIO FROM usuarios where ID_USUARIO = '.$cIdUserSignatario)->row();
+		$RespData['SQL_Signatario'] = $this->db->last_query();
+		//2017-08-21 --> DETERMINAMOS MEDIANTE LA VAR NUEVA ACCION QUE DEBE REALIZAR
+		$accion = $enc['accion'];
+		
+		$datos_enc = array( 'ID_IDR'  					=> $enc['id_idr'],
+			'ID_MUESTRA'  								=> $enc['id_muestra'],
+			'ID_METODOLOGIA'  							=> $enc['id_metodologia'],
+			'ANALISIS_SOLICITADO_PLAGUICIDAS_AGUA'  	=> $enc['analisis_solicitado_plaguicidas'],
+			'ID_USUARIO_SIGNATARIO'						=> $cIdUserSignatario,
+			'METODO_PRUEBA_PLAGUICIDAS_AGUA'  			=> $enc['metodo_prueba_plaguicidas'],
+			'REFERENCIA_PLAGUICIDAS_AGUA'	  			=> $enc['referencia_plaguicidas'],
+			'OBSERVACION_PLAGUICIDAS_AGUA'  			=> $enc['observacion_plaguicidas'],
+			'CONDICIONES_PLAGUICIDAS_AGUA'  			=> $enc['condiciones_plaguicidas'],		
+			'TECNICO_PLAGUICIDAS_AGUA'					=> $query->NOMBRE_USUARIO,
+			'FECHA_FINAL_PLAGUICIDAS_AGUA'				=> $enc['fecha_final_plaguicidas'],
+			'CARGO_TECNICO_PLAGUICIDAS_AGUA' 			=> $query->CARGO_USUARIO,
+			'INICIALES_ANALISTA_PLAGUICIDAS_AGUA'		=> $enc['iniciales_analista_plaguicidas'],			
+			'ID_USUARIO_CAPTURISTA'						=> $_SESSION['user_id']);			
+		
+		// COMENZANDO LAS TRANSACCIONES
+		$this->db->trans_begin();
+		
+		if ($accion == 'ALTA') {
+			$lRet = $this->db->set($datos_enc)->get_compiled_insert('idr_enc_plaguicidas_agua');				
+		}
+		if ($accion == 'EDICION') {
+			$this->db->where('ID_METODOLOGIA', $idMetodologia);
+			$lRet = $this->db->set($datos_enc)->get_compiled_update('idr_enc_plaguicidas_agua');
+		}
+		
+		//$cSql = $this->db->set($datos_enc)->get_compiled_insert('idr_enc_plaguicidas');			
+		$RespData['SQL_ENC'] = 'Cad tabla idr_enc_plaguicidas_agua:['.$lRet."] ";
+		$query = $this->db->query( $lRet);
+		$RespData['RESULTADO_ENC'] = $this->db->affected_rows();
+		
+		if ($accion == 'ALTA') {
+			if ($RespData['RESULTADO_ENC'] > 0 ) { // actualizar el folio del IDR
+					// obtenemos el ultimo id ingresado..!
+				$id_plaguicidas = $this->db->insert_id();
+
+				if ($idIDR>0) { // genero un IDR, hay q actualizar los folios 2018-02-01 --> se movio de arriba
+					$aFolio = $this->db->query('select IDR_AQ from folios')->row();
+					if ($aFolio->IDR_AQ == ($idIDR -1) ) { // procedimiento normal
+						$this->db->set(array('IDR_AQ'=>$idIDR))->update('folios');
+					}else {
+						// ya me ganaron el id hay que buscar otro..
+						$nFolioIDR = $this->db->query('SELECT max( `IDR_AQ` ) + 1 as folio FROM folios')->row();
+						$idIDR = $nFolioIDR->folio;
+						$this->db->set(array('IDR_AQ'=>$idIDR))->update('folios');
+						//actualizar el idr en aflatoxinas mediante el update de los datos ya insertados..!
+						$this->db->update('idr_enc_plaguicidas_agua',array('ID_IDR'=>$idIDR),'ID_ENC_PLAGUICIDAS_AGUA = '.$id_plaguicidas); //2018-02-01 SE MODIFICO ID_PLAGUICIDAS X ID_ENC_....
+					}
+				}				
+			}	
+		}
+
+		$RespData['ID_PLAGUICIDAS_AGUA'] = $id_plaguicidas;
+		
+
+
+
+		if ($accion == 'EDICION'){
+			//2017-09-06 --> Eliminando los analitos grabados anteriormente
+			$cID_Plaguicidas = $this->db->query("select ID_ENC_PLAGUICIDAS_AGUA from idr_enc_plaguicidas_agua where ID_METODOLOGIA = '".$idMetodologia."'")->row();
+			if ($this->db->affected_rows()>0) {
+				//2017-09-06 -->para el caso de edicion hay que borrar a todos analitos registrados y anexar los de la tabla como nuevos
+				$id_plaguicidas = $cID_Plaguicidas->ID_ENC_PLAGUICIDAS_AGUA;
+				if ($id_plaguicidas>0){
+					$this->db->query("delete from idr_det_plaguicidas_agua where ID_ENC_PLAGUICIDAS_AGUA = '".$id_plaguicidas."'" );
+					$accion = 'ALTA';
+					$RespData['Analitos_previos_borrados'] = 'SI';
+					$RespData['Analitos_borrados'] = $this->db->affected_rows();
+				}else {
+					$RespData['Analitos_previos_borrados'] = 'NO /SQL EJECUTADA: '.$this->db->last_query();
+				}
+			}			
+			
+			// 2017-07-25 --> actualizar la base de correcciones
+			$datos2 = array('ID_USUARIO'			=> $_SESSION['user_id'],
+							'ID_METODOLOGIA'		=> $enc['id_metodologia'],
+							'REFERENCIA_TABLA'		=> 'IDR_PLAGUICIDAS',
+							'CAUSAS_CORRECCION'		=> $enc['causas_correccion']	);
+			$lRet2 = $this->db->set($datos2)->get_compiled_insert( 'correcciones_idr');				
+			$query2 = $this->db->query( $lRet2);
+			$RespData['RESULTADO MODIFICACION'] = $this->db->affected_rows();			
+		}
+					
+		$RespData['SQL_ENC'] = $RespData['SQL_ENC'] .' SQL Folios:['.$this->db->last_query().")";
+		$detallado = $det[0];		
+		
+		
+		for ($nPos=0;$nPos<count($detallado);$nPos+=4){
+			
+			$cAnalito 	= $detallado[$nPos];		
+			$cResultado = $detallado[$nPos+1];
+			$cLC 		= $detallado[$nPos+2];
+			//$cLMP 		= $detallado[$nPos+3];
+			$cTecnica 	= $detallado[$nPos+3];
+			
+			$otra_data = array( 				
+				'ID_ENC_PLAGUICIDAS_AGUA'			=> $id_plaguicidas,
+				'ANALITO_PLAGUICIDAS_AGUA'			=> $cAnalito,
+				'RESULTADO_ANALITO_PLAGUICIDAS_AGUA' => $cResultado,
+				'LC_PLAGUICIDAS_AGUA'				=> $cLC,				
+				'TECNICA_PLAGUICIDAS_AGUA'			=> $cTecnica
+				//'ACREDITADO_ANALITO'			
+			);			
+			//array_push( $data, $otra_data);	
+			$data[] = $otra_data;
+		} // fin del for		
+		//print_r($data);
+		
+		
+			
+		if ($accion == 'ALTA') {
+			$this->db->insert_batch('idr_det_plaguicidas_agua',$data);
+			$cSql = $this->db->last_query();
+			$RespData['SQL_DET'] = 'Cad tabla idr_det_plaguicidas_agua:['.$cSql."] ";
+			$RespData['RESULTADO_DET'] = $this->db->affected_rows();
+		
+			//ACTUALIZADNO EL STATUS DEL DETALLADO
+			$idMetodologia = $enc['id_metodologia'];
+			$this->db->query("update detalle_muestras set STATUS_MUESTRA='G' WHERE ID_METODOLOGIA = '$idMetodologia'");
+		} // fin del alta
+
+
+			
+		if ($this->db->trans_status() === FALSE) {
+			$RespData['SITUACION_REGISTRO'] = 'ERROR';
+	       	$this->db->trans_rollback();
+	    } else {        
+	       	$this->db->trans_commit();
+	       	$RespData['SITUACION_REGISTRO'] = 'EXITO';
+	    }		
+	       
+	        
+	    	header('Content-type: application/json; charset=utf-8');
+			$lRet = json_encode($RespData);
+			echo $lRet;
+		}// fin del if enc y det	
+
+	} // fin de la funcion ajax
+	/* ************************************************************************/
 	
 }

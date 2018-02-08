@@ -111,7 +111,7 @@ function EditaRowDetalladoIdrMetales(thisButton){
 	$("#idTecnica_Metal2").val(tecnica_metal);
 	
 	$("#exampleModal").modal("show");	
-}// fin de funcion EditaRowDetalladoIdrPlagicidas(this)
+}// fin de funcion EditaRowDetalladoIdrmETALES(this)
 /***************************************************************/
 
 /******************************************************************/
@@ -143,6 +143,39 @@ function EditaRowDetalladoIdrPlagicidas(thisButton){
 	$("#exampleModal").modal("show");	
 }// fin de funcion EditaRowDetalladoIdrPlagicidas(this)
 /***************************************************************/
+function deleteRowDetalladoIdrPlagicidasAgua(r){
+	var i = r.parentNode.parentNode.rowIndex;
+	var analito = $(r).parents("tr").find("td").eq(0).html();
+	if (confirm('Seguro Eliminar el Analito ['+analito+']')){
+    		document.getElementById("idTablaIDRPlaguicidas").deleteRow(i);    		
+    }
+}
+/******************************************************************/
+
+function EditaRowDetalladoIdrPlagicidasAgua(thisButton){	
+	//var i = r.parentNode.parentNode.rowIndex;
+	//var r = r.parentNode.parentNode.parentNode;
+	var analito 		= $(thisButton).parents("tr").find("td").eq(0).html();
+	var resultado 		= $(thisButton).parents("tr").find("td").eq(1).html();
+	var lc_analito 		= $(thisButton).parents("tr").find("td").eq(2).html();
+	//var lmp_analito 	= $(thisButton).parents("tr").find("td").eq(3).html();
+	var tecnica_analito = $(thisButton).parents("tr").find("td").eq(3).html();	
+	
+	// SE LES CARGA EN SU VENTANA MODAL CON LAS NUEVAS 
+	$("#idAnalito2").val(analito);
+	$("#idResultado_analito2").val(resultado);
+	$("#idLC_analito2").val(lc_analito);
+	//$("#idLMP_analito2").val(lmp_analito);
+	$("#idTecnica2").val(tecnica_analito);
+	
+	$("#exampleModal").modal("show");	
+}// fin de funcion EditaRowDetalladoIdrPlagicidas(this)
+/************************************************************************/
+$("#BtnAgregaAnalitosfromFilePlaguicidasAgua2").click(function(){ //2018-02-07 v_idr_plaguiocodas_agua --> no se usa
+	$("#exampleModal2").modal("show");
+});
+/**************************************************************************/
+
 function deleteRowDetalladoResultado(r){ 
 	var i = r.parentNode.parentNode.rowIndex;
 	var elemento = $(r).parents("tr").find("td").eq(0).html();
@@ -269,10 +302,66 @@ function SeleccionaRegistro( valor, arreglo ){// viene del controlador clientes 
 		document.getElementById('response_search').innerHTML = "";
 	}		
 }
-
+/***********************************************************/
+function successFunction(data) {
+	alert('entro');
+  var allRows = data.split(/r?n|r/);
+  var table = '<table>';
+  for (var singleRow = 0; singleRow < allRows.length; singleRow++) {
+    if (singleRow === 0) {
+      table += '<thead>';
+      table += '<tr>';
+    } else {
+      table += '<tr>';
+    }
+    var rowCells = allRows[singleRow].split(',');
+    for (var rowCell = 0; rowCell < rowCells.length; rowCell++) {
+      if (singleRow === 0) {
+        table += '<th>';
+        table += rowCells[rowCell];
+        table += '</th>';
+      } else {
+        table += '<td>';
+        table += rowCells[rowCell];
+        table += '</td>';
+      }
+    }
+    if (singleRow === 0) {
+      table += '</tr>';
+      table += '</thead>';
+      table += '<tbody>';
+    } else {
+      table += '</tr>';
+    }
+  } 
+  table += '</tbody>';
+  table += '</table>';
+  $('body').append(table);
+}
+function errorFunction(data){
+	alert('entro a la function error');
+	console.log(data);
+}
 
 /***********************A Q U I  E M P E Z A M O S  L O  D E  E L  J Q U E R Y*****************************/
 $(function () {
+
+
+	/*
+	var cFileCSV = "C:\\Users\\TECNOLOGÍAS DE LA I\\Documents\\analitos_csv.csv";
+	var fh = fopen(cFileCSV);
+	if (fh){
+		alert('ok');
+	}else {
+		alert(' no ok');
+	}
+
+	alert( cFileCSV);
+	$.ajax({
+  		url: cFileCSV,
+  		dataType: 'text',
+	}).done(successFunction).error(errorFunction);
+	*/
 	
 	//alert($.fn.jquery);
 	
@@ -602,8 +691,7 @@ $(function () {
        stateSave: true,
        iDisplayLength: 50       
     }); // fin de datatable     
-	/*****************************************************/ 
-	
+	/*****************************************************/ 	
 	$("#btnAddDatosIDRPlagicidas").click(function(){
 		//alert('entro');
 
@@ -2806,7 +2894,8 @@ $(function () {
 		var idMetodologia 	= $("#idMetodologia").val();
 		var accion 			= $(this).val(); // toma el value del boton que llamo a este procedimiento // ALTA o EDICION
 			
-		
+		//alert( accion);
+
 		//var iniciales 	= $("#idInicialesAnalista").val();
 		var fechafinal	= $("#idFechaFinal").val();		
 		
@@ -2865,10 +2954,10 @@ $(function () {
 					var analito = $(this).find("td").eq(0).html();
 					var resultado = $(this).find("td").eq(1).html();
 					var lc = $(this).find("td").eq(2).html();
-					var lmp = $(this).find("td").eq(3).html();
-					var tecnica = $(this).find("td").eq(4).html();
+					//var lmp = $(this).find("td").eq(3).html();
+					var tecnica = $(this).find("td").eq(3).html();
 					if (analito) {
-						detallado.push( analito,resultado,lc,lmp,tecnica);	
+						detallado.push( analito,resultado,lc,tecnica);	
 					}			
 
 				});
@@ -2882,7 +2971,7 @@ $(function () {
 				$.ajax({			
 					data: data,
 					method: 'POST',
-					url: baseUrlCortaCorta+'/graba_idr_Plagicidas',
+					url: baseUrlCortaCorta+'/graba_idr_Plagicidas_agua',
 					success: function (htmlResponse){
 						console.log('entro a la funcion sucesso de grabar idr_plagicidas');
 						console.log(htmlResponse);
@@ -2896,13 +2985,271 @@ $(function () {
 					},
 				}); // fin del ajax
 				//alert('saleidno del ajax para grabar idr de plagicidas');
-				console.log('saleidno del ajax para grabar idr de plagicidas');
+				console.log('salieno del ajax para grabar idr de plagicidas');
 			
 			}  // FIN DEL CONFIRM
 		}// FIN DEL IF PASOS PREVIOS A LA VALIDACION
 				
 		
 	});
+	/****************************************************************************************************/
+	$("#BtnAgregaTodosAnalitosTablaPlaguicidasAgua").click(function(){ // agrega todos los analitos a la tabla 2018-01-30
+		//obtener las variables que participan USANDO UN AJAX
+		$.ajax({
+			dataType:"json",
+			url:baseUrlCortaCorta+"obtener_todos_los_analitos_plaguicidas_agua",
+			success: function(htmlResponse){
+				var objAnalitos = htmlResponse['RESULTADO'];				
+				//console.log(objAnalitos);
+				
+				$.each(objAnalitos,function(i,contenido){			
+					
+					console.log(contenido);
+					
+					var cAnalito 	= objAnalitos[i].NOMBRE_ANALITO_PLAGUICIDAS_AGUA;
+					var cResultado 	= objAnalitos[i].RESULTADO_ANALITO_PLAGUICIDAS_AGUA;
+					var cLC 		= objAnalitos[i].LC_ANALITO_PLAGUICIDAS_AGUA;
+					//var cLMP 		= objAnalitos[i].LMP_ANALITO;
+					var cTecnica	= objAnalitos[i].TECNICA_ANALITO_PLAGUICIDAS_AGUA;
+					
+
+					//ANEXANDOLO AHORA A LA TABLA
+					cHtml = '<tr id="'+getRandomChars(6)+'">';
+					cHtml += '<td>'+cAnalito+'</td><td>'+cResultado+'</td><td>'+cLC+'</td><td>'+cTecnica+'</td>';
+					cHtml += '<td>';
+					
+					cHtml += '<button type="button" class="btn btn-info btn-xs" onclick="deleteRowDetalladoIdrPlagicidasAgua(this)" ><span class="glyphicon glyphicon-trash"></span></button>';					
+					cHtml += '<button type="button" class="btn btn-info btn-xs" onclick="EditaRowDetalladoIdrPlagicidasAgua(this)" ><span class="glyphicon glyphicon-pencil"></span></button>';
+					
+					cHtml += '</td>';
+					cHtml += '</tr>';
+					if ($('#idTablaIDRPlaguicidas >tbody >tr').length == 0){
+			 			$("#idTablaIDRPlaguicidas").append("<tbody></tbody>");
+			 				//alert("Agregando un tbody a la tabla");
+					}
+					$("#idTablaIDRPlaguicidas tbody").append(cHtml);
+					
+					
+				});			
+			},				
+						
+		}); // fin del ajax	
+	
+		
+	}) // fin de BtnAgregaTodosAnalitosTablaPlaguicidasAgua
 	/***************************************************************/
+	$("#BtnAgregaAnalitosAcreditadosTablaPlaguicidasAgua").click(function(){ // agrega todos los analitos a la tabla
+		//obtener las variables que participan USANDO UN AJAX
+		$.ajax({
+			dataType:"json",
+			url:baseUrlCortaCorta+"obtener_todos_los_analitos_acreditados_plaguicidas_agua",
+			success: function(htmlResponse){
+				var objAnalitos = htmlResponse['RESULTADO'];				
+				//console.log(objAnalitos);
+				
+				$.each(objAnalitos,function(i,contenido){			
+					
+					console.log(contenido);
+					
+					var cAnalito 	= objAnalitos[i].NOMBRE_ANALITO_PLAGUICIDAS_AGUA;
+					var cResultado 	= objAnalitos[i].RESULTADO_ANALITO_PLAGUICIDAS_AGUA;
+					var cLC 		= objAnalitos[i].LC_ANALITO_PLAGUICIDAS_AGUA;
+					//var cLMP 		= objAnalitos[i].LMP_ANALITO;
+					var cTecnica	= objAnalitos[i].TECNICA_ANALITO_PLAGUICIDAS_AGUA;
+					
+					//cHtml += '<button type="button" class="btn btn-info btn-xs" onclick="deleteRowDetalladoIdrPlagicidas(this)" ><span class="glyphicon glyphicon-trash"></span></button>';
+					//ANEXANDOLO AHORA A LA TABLA
+					cHtml = '<tr id="'+getRandomChars(6)+'">';
+					cHtml += '<td>'+cAnalito+'</td><td>'+cResultado+'</td><td>'+cLC+'</td><td>'+cTecnica+'</td>';
+					cHtml += '<td>';
+					
+					cHtml += '<button type="button" class="btn btn-info btn-xs" onclick="deleteRowDetalladoIdrPlagicidasAgua(this)" ><span class="glyphicon glyphicon-trash"></span></button>';					
+					cHtml += '<button type="button" class="btn btn-info btn-xs" onclick="EditaRowDetalladoIdrPlagicidasAgua(this)" ><span class="glyphicon glyphicon-pencil"></span></button>';					
+					cHtml += '</td>';
+					cHtml += '</tr>';
+					if ($('#idTablaIDRPlaguicidas >tbody >tr').length == 0){
+			 			$("#idTablaIDRPlaguicidas").append("<tbody></tbody>");
+			 				//alert("Agregando un tbody a la tabla");
+					}
+					$("#idTablaIDRPlaguicidas tbody").append(cHtml);
+					
+					
+				});			
+			},				
+						
+		}); // fin del ajax	
+	
+		
+	}) // fin de BtnAgregaTodosAnalitosTabla
+	/* ************************************************************************/	
+	$("#BtnAgregaAnalitosxMetodoLCPlaguicidasAgua").click(function(){ // agrega todos los analitos a la tabla x metodo LC
+		//obtener las variables que participan USANDO UN AJAX
+		$.ajax({
+			dataType:"json",
+			url:baseUrlCortaCorta+"obtener_todos_los_analitos_x_metodo_lc_plaguicidas_agua",
+			success: function(htmlResponse){
+				var objAnalitos = htmlResponse['RESULTADO'];				
+				//console.log(objAnalitos);
+				
+				$.each(objAnalitos,function(i,contenido){			
+					
+					console.log(contenido);
+					
+					var cAnalito 	= objAnalitos[i].NOMBRE_ANALITO_PLAGUICIDAS_AGUA;
+					var cResultado 	= objAnalitos[i].RESULTADO_ANALITO_PLAGUICIDAS_AGUA;
+					var cLC 		= objAnalitos[i].LC_ANALITO_PLAGUICIDAS_AGUA;
+					//var cLMP 		= objAnalitos[i].LMP_ANALITO;
+					var cTecnica	= objAnalitos[i].TECNICA_ANALITO_PLAGUICIDAS_AGUA;
+					//var cTecnica	= 'LC';
+					
+					//ANEXANDOLO AHORA A LA TABLA
+					cHtml = '<tr id="'+getRandomChars(6)+'">';
+					cHtml += '<td>'+cAnalito+'</td><td>'+cResultado+'</td><td>'+cLC+'</td><td>'+cTecnica+'</td>';
+					cHtml += '<td>';
+					
+					cHtml += '<button type="button" class="btn btn-info btn-xs" onclick="deleteRowDetalladoIdrPlagicidasAgua(this)" ><span class="glyphicon glyphicon-trash"></span></button>';
+					cHtml += '<button type="button" class="btn btn-info btn-xs" onclick="EditaRowDetalladoIdrPlagicidasAgua(this)" ><span class="glyphicon glyphicon-pencil"></span></button>';					
+					cHtml += '</td>';
+					cHtml += '</tr>';
+					if ($('#idTablaIDRPlaguicidas >tbody >tr').length == 0){
+			 			$("#idTablaIDRPlaguicidas").append("<tbody></tbody>");
+			 				//alert("Agregando un tbody a la tabla");
+					}
+					$("#idTablaIDRPlaguicidas tbody").append(cHtml);
+				});			
+			},				
+		}); // fin del ajax	
+	}) // fin de BtnAgregaAnalitosxMetodoLCPlaguicidasAgua
+	/**********************************************************************************************************/
+	$("#BtnAgregaAnalitosxMetodoGCPlaguicidasAgua").click(function(){ // agrega todos los analitos a la tabla x metodo LC
+		//obtener las variables que participan USANDO UN AJAX
+		$.ajax({
+			dataType:"json",
+			url:baseUrlCortaCorta+"obtener_todos_los_analitos_x_metodo_gc_plaguicidas_agua",
+			success: function(htmlResponse){
+				var objAnalitos = htmlResponse['RESULTADO'];				
+				//console.log(objAnalitos);
+				
+				$.each(objAnalitos,function(i,contenido){			
+					
+					console.log(contenido);
+					
+					var cAnalito 	= objAnalitos[i].NOMBRE_ANALITO_PLAGUICIDAS_AGUA;
+					var cResultado 	= objAnalitos[i].RESULTADO_ANALITO_PLAGUICIDAS_AGUA;
+					var cLC 		= objAnalitos[i].LC_ANALITO_PLAGUICIDAS_AGUA;
+					//var cLMP 		= objAnalitos[i].LMP_ANALITO;
+					var cTecnica	= objAnalitos[i].TECNICA_ANALITO_PLAGUICIDAS_AGUA;
+					//var cTecnica	= 'GC';
+					
+					//ANEXANDOLO AHORA A LA TABLA
+					cHtml = '<tr id="'+getRandomChars(6)+'">';
+					cHtml += '<td>'+cAnalito+'</td><td>'+cResultado+'</td><td>'+cLC+'</td><td>'+cTecnica+'</td>';
+					cHtml += '<td>';
+					
+					cHtml += '<button type="button" class="btn btn-info btn-xs" onclick="deleteRowDetalladoIdrPlagicidasAgua(this)" ><span class="glyphicon glyphicon-trash"></span></button>';
+					cHtml += '<button type="button" class="btn btn-info btn-xs" onclick="EditaRowDetalladoIdrPlagicidasAgua(this)" ><span class="glyphicon glyphicon-pencil"></span></button>';					
+					cHtml += '</td>';
+					cHtml += '</tr>';
+					if ($('#idTablaIDRPlaguicidas >tbody >tr').length == 0){
+			 			$("#idTablaIDRPlaguicidas").append("<tbody></tbody>");
+			 				//alert("Agregando un tbody a la tabla");
+					}
+					$("#idTablaIDRPlaguicidas tbody").append(cHtml);
+				});			
+			},				
+		}); // fin del ajax	
+	}) // fin de BtnAgregaAnalitosxMetodoGCPlaguicidasAgua
+	/**************************************************************************************************/
+	$("#btnAddDatosIDRPlagicidasAgua").click(function(){ //actualiza la tabla donde estan los analitos 2018-02-01
+		//alert('entro');
+
+		var cResultado 	= $("#idResultado_analito2").val();			
+		var cLC 		= $("#idLC_analito2").val();
+		//var cLMP 		= $("#idLMP_analito2").val();
+		var cTecnica 	= $("#idTecnica2").val();		
+		 
+        //obtenemos el valor insertado a buscar
+		var cAnalito 	= $("#idAnalito2").val(); // campo de busqueda 
+        //utilizamos esta variable solo de ayuda y mostrar que se encontro
+        encontradoResultado=false;
+ 
+        //realizamos el recorrido solo por las celdas que contienen el código, que es la primera
+        $("#idTablaIDRPlaguicidas tr").find('td:eq(0)').each(function () {
+ 
+             //obtenemos el codigo de la celda
+              codigo = $(this).html();
+ 
+               //comparamos para ver si el código es igual a la busqueda
+               if(codigo==cAnalito){
+ 
+                    //aqui ya que tenemos el td que contiene el codigo utilizaremos parent para obtener el tr.
+                    trDelResultado=$(this).parent();                  
+ 
+                    //ya que tenemos el tr seleccionado ahora podemos navegar a las otras celdas con find
+                                      
+                    trDelResultado.find("td:eq(1)").html(cResultado);
+                    trDelResultado.find("td:eq(2)").html(cLC);
+                    //trDelResultado.find("td:eq(3)").html(cLMP);
+                    trDelResultado.find("td:eq(3)").html(cTecnica);
+ 
+                    //mostramos el resultado en el div
+                    //$("#mostrarResultado").html("El nombre es: "+nombre+", la edad es: "+edad)
+ 
+                    encontradoResultado=true; 
+               } 
+        })
+ 
+        //si no se encontro resultado mostramos que no existe.
+        if(!encontradoResultado) {
+			alert('no se encontro el analito ['+cAnalito +']');
+		}
+        //$("#mostrarResultado").html("No existe el código: "+buscar)		
+	});
+	/****************************************************************************************/
+	$("#BtnAgregaAnalitoTablaPlaguicidasAgua").click(function(){
+		
+		//obtener las variables que participan
+		var iniciales  = $("#idInicialesAnalista").val();
+		//alert(iniciales);		
+		
+		var cAnalito = $("#idAnalitoCombo option:selected").text();
+		var cResultado =  $("#idResultado_analito").val();			
+		var cLC = $("#idLC_analito").val();
+		//var cLMP = $("#idLMP_analito").val();
+		var cTecnica = $("#idTecnica").val();
+
+		if ( !cResultado ) { alert('Especificar Resultado Permisible');
+		}else { 
+
+			if (confirm('Anexar el Resultado ['+cAnalito+'/'+cResultado+'/'+cLC+'/'+cTecnica+']')){			
+
+				cHtml = '<tr id="'+getRandomChars(6)+'">';
+				cHtml += '<td>'+cAnalito+'</td><td>'+cResultado+'</td><td>'+cLC+'</td><td>'+cTecnica+'</td>';
+				cHtml += '<td>';				
+				cHtml += '<button type="button" class="btn btn-info btn-xs" onclick="deleteRowDetalladoIdrPlagicidasAgua(this)" ><span class="glyphicon glyphicon-trash"></span></button>';
+				//cHtml += '<button type="button" name="button_datos_idr_plagicidas" id="button_datos_idr_plagicidas" class="btn btn-info btn-xs" data-toggle="modal" data-target="#exampleModal" ><span class="glyphicon glyphicon-pencil"></span></button>';
+				cHtml += '<button type="button" class="btn btn-info btn-xs" onclick="EditaRowDetalladoIdrPlagicidasAgua(this)" ><span class="glyphicon glyphicon-pencil"></span></button>';
+								
+				//cHtml += '<button type="button" name="button_datos_idr_plagicidas" id="button_datos_idr_plagicidas" class="btn btn-info btn-xs esModificable"><span class="glyphicon glyphicon-pencil"></span></button>';
+				//cHtml += '<button type="button" class="btn btn-info btn-xs esModificable"><span class="glyphicon glyphicon-pencil"></span></button>';
+				//cHtml += '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Launch demo modal</button>';
+				cHtml += '</td>';
+				cHtml += '</tr>';				
+
+				if ($('#idTablaIDRPlaguicidas >tbody >tr').length == 0){
+		 			$("#idTablaIDRPlaguicidas").append("<tbody></tbody>");
+		 				//alert("Agregando un tbody a la tabla");
+				}
+				$("#idTablaIDRPlaguicidas tbody").append(cHtml);
+				$("#idResultado_analito").val("ND");
+				// cambiar el analito
+				$('#idAnalitoCombo option:selected').next().attr('selected', 'selected');
+
+    			
+				$("#idResultado_analito").focus();
+			} // fin del confirm
+		}// fin del if !cResultado
+	})
+	// *******************************************************************
 	
 }); // FIN DEL JQUERY
